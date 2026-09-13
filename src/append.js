@@ -7,6 +7,7 @@ import { entryHash, hhmm } from "./chain.js";
 import { signText } from "./crypto.js";
 
 export const sealEntry = async ({ prev, seq, raw, privateKey = null }) => {
+  if (raw.lane === undefined) throw new Error(`entry ${seq} has no lane field; use null for an entry outside any track`);
   const actor = raw.actor || { id: null, name: "unresolved" };
   const sealed = Boolean(actor.id);
   const base = { ...raw, actor, seq, t: hhmm(raw.m ?? 0), sealed, prev };

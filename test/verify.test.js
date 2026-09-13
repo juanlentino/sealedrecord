@@ -317,3 +317,20 @@ describe("a holding chain with a broken track", () => {
     expect(r.verdicts[0].verdict.gap.seq).toBe(3);
   });
 });
+
+/* Producer contract: nothing that would commit as the text "undefined".
+   A missing lane would enter the digest that way (FORMAT.md 4.1); a missing
+   session id would enter every receipt (FORMAT.md 7). Producers refuse. */
+describe("producers never emit what would commit as undefined", () => {
+  const actor = { id: null, name: "G" };
+  it("buildEvents refuses an event with no lane field (null is fine)", async () => {
+    await expect(buildEvents([{ m: 0, action: "x", room: "r", actor }], null)).rejects.toThrow(/lane/);
+    const ok = await buildEvents([{ m: 0, action: "x", room: "r", actor, lane: null }], null);
+    expect(ok[0].lane).toBeNull();
+  });
+  it("buildPackage refuses attestations on a session with no id", async () => {
+    const events = await buildEvents([{ m: 0, action: "package sealed", room: "r", actor, lane: null }], null);
+    expect(() => buildPackage([], events, { code: "1", title: "t" }, "14:00", null, { key: {}, receipts: [] })).toThrow(/session id/);
+    expect(() => buildPackage([], events, { code: "1", title: "t" }, "14:00")).not.toThrow();
+  });
+});

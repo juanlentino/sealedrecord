@@ -12,7 +12,14 @@ export const PKG_FORMAT = "sealedrecord/package.v3";
 /* Free text for humans, never committed, never read by a verifier. */
 export const DEFAULT_NOTE = "Sealed record: SHA-256 chain digests, Ed25519 entry signatures. Attestations (time receipts, timestamp proofs) are metadata about the chain, never part of it.";
 
-export const buildPackage = (lanes, sealedEvents, meta, sealedAt, signers = null, attestations = null, note = DEFAULT_NOTE) => ({
+export const buildPackage = (lanes, sealedEvents, meta, sealedAt, signers = null, attestations = null, note = DEFAULT_NOTE) => {
+  /* Receipts commit the session id into every signed canonical; a record
+     that carries attestations without an id would commit "undefined". */
+  if (attestations && !meta.id) throw new Error("attestations require a session id; receipts commit it");
+  return packageObject(lanes, sealedEvents, meta, sealedAt, signers, attestations, note);
+};
+
+const packageObject = (lanes, sealedEvents, meta, sealedAt, signers, attestations, note) => ({
   format: PKG_FORMAT,
   note,
   session: { ...(meta.id ? { id: meta.id } : {}), code: meta.code, title: meta.title },

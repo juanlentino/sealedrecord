@@ -59,3 +59,9 @@ describe("sealEntry", () => {
     expect(r.signed).toBe(true);
   });
 });
+
+describe("sealEntry refuses an entry with no lane field", () => {
+  it("throws before hashing", async () => {
+    await expect(sealEntry({ prev: GENESIS, seq: 1, raw: { m: 0, action: "x", room: "r", actor: { id: null, name: "G" } } })).rejects.toThrow(/lane/);
+  });
+});

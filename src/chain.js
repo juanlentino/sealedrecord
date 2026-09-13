@@ -44,6 +44,8 @@ export const buildEvents = async (rawEvents, signerFor = null) => {
   const out = [];
   for (let i = 0; i < ordered.length; i++) {
     const e = ordered[i];
+    /* A missing lane would commit as the text "undefined". Null is a lane. */
+    if (e.lane === undefined) throw new Error(`event ${i + 1} has no lane field; use null for an event outside any track`);
     const actor = e.actor || { id: null, name: "unresolved" };
     const sealed = Boolean(actor.id);
     const hash = await entryHash(prev, i, { ...e, actor });

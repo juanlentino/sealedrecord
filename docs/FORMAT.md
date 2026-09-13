@@ -42,7 +42,7 @@ A record is one UTF-8 JSON document. All digests and signatures are lowercase he
 | `hash` | string | yes | the digest; recomputed, never believed |
 | `sig` | string | no | Ed25519 over `hash` (§4.4) |
 
-The reference producer never emits `lane` as undefined; a reader recomputing the digest stringifies whatever it finds (§4.1), so a missing `lane` commits as the text `undefined` and will not match a digest produced with `null`.
+A conforming producer never emits an entry without `lane`; the reference producer refuses one. A reader recomputing the digest stringifies whatever it finds (§4.1), so a missing `lane` would commit as the text `undefined` and never match a digest produced with `null`; such a record is a producer defect, not a reader concern.
 
 ## 4. The chain
 
@@ -187,7 +187,7 @@ Ed25519.verify( attestations.key, sig_bytes, UTF8(canonical) ) == true
 canonical = "sealedrecord/receipt.v1|" + session.id + "|" + seq + "|" + hash + "|" + received_at
 ```
 
-with `hash` taken from the entry (verify the chain first; receipts vouch for time, not content) and `session.id` stringified as in §4.1 (a missing id commits as `undefined`). Drop any JWK `alg` member before importing `attestations.key`.
+with `hash` taken from the entry (verify the chain first; receipts vouch for time, not content) and `session.id` stringified as in §4.1. A conforming producer never attaches attestations to a record without a session id; the reference producer refuses. A reader that meets one stringifies the missing id as `undefined`, which is what the receipt would have signed. Drop any JWK `alg` member before importing `attestations.key`.
 
 The reader reports `total` entries, `receipted` (entries with a receipt), `verified`, a `problems` list, and `unchecked`: the names of every other member of `attestations`, carried unparsed and unverified. Entries without a receipt are not a problem. An unimportable key is one problem and no receipts verify. Receipts that are not objects are ignored.
 
@@ -195,7 +195,7 @@ What a receipt proves: the holder of `attestations.key` saw this hash at this ti
 
 ## 8. Producing a record
 
-A conforming producer sorts raw events by `m` ascending, assigns `seq` from 1, derives `t`, computes each digest per §4.1, signs each enrolled entry's digest with that actor's private key, and serialises exactly the fields listed in §2 and §3, omitting optional fields that are absent rather than emitting `null`. A producer that signs at all signs every enrolled entry and carries every signer's key; a record with `actor.id` set, no `sig`, and no `signers` is what a hash-only producer emits, and a reader cannot tell it from a signed record whose `signers` were removed (§4.4). Readers report `signed: false` for both; consumers must read that field rather than the outcome alone. The last entry of a finished record has `action` equal to `package sealed`.
+A conforming producer sorts raw events by `m` ascending, assigns `seq` from 1, derives `t`, computes each digest per §4.1, signs each enrolled entry's digest with that actor's private key, and serialises exactly the fields listed in §2 and §3, omitting optional fields that are absent rather than emitting `null`. A producer that signs at all signs every enrolled entry and carries every signer's key; a record with `actor.id` set, no `sig`, and no `signers` is what a hash-only producer emits, and a reader cannot tell it from a signed record whose `signers` were removed (§4.4). Readers report `signed: false` for both; consumers must read that field rather than the outcome alone. Every entry carries `lane` (a string, a number, or null), and a record that carries `attestations` carries `session.id`; the reference producer refuses to emit either omission, because both would commit the text `undefined`. The last entry of a finished record has `action` equal to `package sealed`.
 
 ## 9. Limits and refusals
 
