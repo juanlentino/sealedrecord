@@ -18,8 +18,10 @@ export const exportJwk = (key) => crypto.subtle.exportKey("jwk", key);
 export const importPrivateJwk = (jwk) =>
   crypto.subtle.importKey("jwk", jwk, ED, true, ["sign"]);
 
-export const importPublicJwk = (jwk) =>
-  crypto.subtle.importKey("jwk", jwk, ED, true, ["verify"]);
+/* Importable means kty OKP, crv Ed25519, and a 32-byte x. Every other
+   member (alg, key_ops, use, ext) is ignored so runtimes agree. */
+export const importPublicJwk = ({ kty, crv, x } = {}) =>
+  crypto.subtle.importKey("jwk", { kty, crv, x }, ED, true, ["verify"]);
 
 export const signText = async (privateKey, s) =>
   HEX(await crypto.subtle.sign(ED, privateKey, ENC.encode(s)));

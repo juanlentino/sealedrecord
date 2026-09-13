@@ -334,3 +334,35 @@ describe("producers never emit what would commit as undefined", () => {
     expect(() => buildPackage([], events, { code: "1", title: "t" }, "14:00")).not.toThrow();
   });
 });
+
+/* Gaps found by writing a second reader from FORMAT.md alone. Each is now a
+   rule in the document; these pin the reference to it. */
+describe("second-reader gaps, closed", () => {
+  const good = async () => {
+    const pair = await generateSigningKey();
+    const jwk = await exportJwk(pair.publicKey);
+    const raw = [{ m: 0, action: "session opened", lane: null, room: "r", actor: { id: "ctr:a", name: "A" } },
+      { m: 1, action: "package sealed", lane: null, room: "r", actor: { id: "ctr:a", name: "A" } }];
+    const events = await buildEvents(raw, () => pair.privateKey);
+    return { pkg: buildPackage([], events, { code: "1", title: "t" }, "14:01", { "ctr:a": jwk }), jwk };
+  };
+  it("m must be a number: a rebuilt hash-only chain with null m does not pass the clock check", async () => {
+    /* Hashes are recomputable by anyone. With signers stripped, an attacker
+       can rebuild the chain around m: null; JavaScript coercion would then
+       accept t "14:00". The rule makes step 2 refuse it. */
+    const { pkg } = await good(); delete pkg.signers;
+    const [a, b] = pkg.entries;
+    a.m = null; a.t = "14:00"; delete a.sig; delete b.sig;
+    a.hash = await entryHash(GENESIS, 0, a);
+    b.prev = a.hash; b.hash = await entryHash(a.hash, 1, b);
+    expect(await verifyPackage(pkg)).toMatchObject({ kind: "altered", breakSeq: 1 });
+  });
+  it("signers that is an array is treated as absent", async () => {
+    const { pkg } = await good(); pkg.signers = [1, 2, 3];
+    expect(await verifyPackage(pkg)).toMatchObject({ kind: "holds", signed: false });
+  });
+  it("a JWK with extra members still imports; only kty, crv, x matter", async () => {
+    const { pkg, jwk } = await good(); pkg.signers["ctr:a"] = { ...jwk, key_ops: ["sign"], use: "enc", alg: "whatever", ext: false };
+    expect(await verifyPackage(pkg)).toMatchObject({ kind: "holds", signed: true });
+  });
+});

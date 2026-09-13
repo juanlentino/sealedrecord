@@ -17,3 +17,8 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm ci
       - run: npm test
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - name: the second reader agrees with the vectors
+        run: cd conformance/go && go test ./...

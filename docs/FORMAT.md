@@ -17,7 +17,7 @@ A record is one UTF-8 JSON document. All digests and signatures are lowercase he
 | `session` | object | partly | `id` (optional string), `code`, `title`. Only `id` participates in receipts (§7). |
 | `sealedAt` | string | no | The `t` of the sealing entry. Display only. |
 | `tracks` | array | no | `{ id, name, origin }`. Used only to compute per-track verdicts (§5.4). |
-| `signers` | object | no | Map from actor id to an Ed25519 public JWK (`kty: "OKP"`, `crv: "Ed25519"`, `x`). Optional. |
+| `signers` | object | no | Map from actor id to an Ed25519 public JWK (`kty: "OKP"`, `crv: "Ed25519"`, `x`). Optional. Anything that is not a JSON object (an array included) is treated as absent. |
 | `attestations` | object | no | `{ key, receipts, ... }`, see §7. Optional. |
 | `entries` | array | yes | The chain. 1 to 10000 entries. |
 
@@ -28,7 +28,7 @@ A record is one UTF-8 JSON document. All digests and signatures are lowercase he
 | Field | Type | Required | Committed |
 |---|---|---|---|
 | `seq` | integer | yes | as the zero-based index `seq - 1` |
-| `m` | number | yes | yes |
+| `m` | number | yes | yes; a value that is not a JSON number fails step 2 of §5.2 |
 | `t` | string | yes | no, but must equal `hhmm(m)` (§4.3) |
 | `room` | string | yes | yes |
 | `lane` | string or null | emitted always | yes |
@@ -61,7 +61,7 @@ prev_i  = hash_{i-1}
 prev | i | action | lane | actor.id | actor.name | m | room | note' | artifact' | derivedFrom' | alg'
 ```
 
-Stringification follows JavaScript template conversion: numbers in shortest decimal form, `null` as the text `null`, `undefined` as the text `undefined`, booleans as `true`/`false`. The primed components use these substitutions:
+Stringification follows JavaScript template conversion: `null` as the text `null`, `undefined` as the text `undefined`, booleans as `true`/`false`, and numbers as JavaScript prints them. Conforming producers emit `m`, `derivedFrom`, and `artifact.size` as integers, which every language prints the same way: decimal digits, no fraction, no exponent. A reader in another language need only render integral numbers that way; non-integral numbers in those fields are a producer defect. The primed components use these substitutions:
 
 - `note'`: `note` if present, else empty string.
 - `derivedFrom'`: `derivedFrom` if present, else empty string.
@@ -91,7 +91,7 @@ The 14 is a fixed downbeat, not a time zone. `t` is display; `m` is what is comm
 
 ### 4.4 Signature
 
-An entry whose `actor.id` is a non-empty string is enrolled. When the record carries `signers`, every enrolled entry must carry `sig`, and `signers[actor.id]` must be an importable Ed25519 public JWK, and
+An entry whose `actor.id` is a non-empty string is enrolled. When the record carries `signers`, every enrolled entry must carry `sig`, and `signers[actor.id]` must be an importable Ed25519 public JWK. Importable means exactly: `kty` is `"OKP"`, `crv` is `"Ed25519"`, and `x` is 32 bytes in base64url without padding. Readers ignore every other member (`alg`, `key_ops`, `use`, `ext`), so runtimes agree. Then
 
 ```
 Ed25519.verify( signers[actor.id], sig_bytes, UTF8(hash) ) == true
@@ -117,14 +117,14 @@ Return `{ kind: "malformed", detail }` when: the value is not an object; `format
 Walk `entries` in order with `prev = GENESIS`. Stop at the first entry that fails any check, in this order, and report `{ kind: "altered", breakSeq, detail }` where `breakSeq` is the one-based position:
 
 1. Each of `seq`, `m`, `room`, `action`, `actor`, `prev`, `hash` is present (not undefined).
-2. `actor` is a non-null object, and `prev` and `hash` are strings (a digest is a string; any other type fails here).
+2. `actor` is a non-null object, `prev` and `hash` are strings (a digest is a string), and `m` is a JSON number. Any other type fails here, before any arithmetic or coercion could make it pass.
 3. `seq == index + 1`.
 4. `prev == running prev`.
 5. `derivedFrom`, if present, is an integer in `[1, index]`.
 6. `alg`, if present, is `"Ed25519"`.
 7. Recomputed digest (§4.1) equals `hash`.
 8. `t == hhmm(m)`.
-9. If signatures are being checked and `actor.id` is truthy: `sig` present, key present and importable, signature verifies.
+9. If signatures are being checked and `actor.id` is a non-empty string: `sig` is a non-empty string, the key is present and importable, and the signature verifies. Readers may word the failure differently; the outcome is `altered` at this entry either way.
 
 After each accepted entry, set `running prev = hash` and mark the entry `sealed = Boolean(actor.id)`.
 
@@ -180,11 +180,11 @@ Any parse failure yields no anchor (`null`), never an error. Metadata chunks (`L
 }
 ```
 
-A receipt for entry `seq` is valid when
+A receipt belongs to the entry whose `seq` it equals under strict equality (a number matches a number; the text `"1"` matches nothing). At most one receipt per entry is considered; the reference keeps the last one listed. A receipt is valid when
 
 ```
 Ed25519.verify( attestations.key, sig_bytes, UTF8(canonical) ) == true
-canonical = "sealedrecord/receipt.v1|" + session.id + "|" + seq + "|" + hash + "|" + received_at
+canonical = "sealedrecord/receipt.v1|" + session.id + "|" + entry.seq + "|" + entry.hash + "|" + receipt.received_at
 ```
 
 with `hash` taken from the entry (verify the chain first; receipts vouch for time, not content) and `session.id` stringified as in §4.1. A conforming producer never attaches attestations to a record without a session id; the reference producer refuses. A reader that meets one stringifies the missing id as `undefined`, which is what the receipt would have signed. Drop any JWK `alg` member before importing `attestations.key`.
@@ -215,6 +215,8 @@ A conforming producer sorts raw events by `m` ascending, assigns `seq` from 1, d
 The format tag is the contract. `sealedrecord/package.v3` names exactly the rules in this document; a reader that implements them reads every v3 record, and a record that follows them reads the same under every conforming reader.
 
 Any change that alters an outcome for an existing record gets a new tag. That covers the digest preimage (§4.1), the committed fields (§3), the check order (§5.2), the outcome rules (§5.3, §5.4), the anchor definitions (§6), and the receipt canonical form (§7). Wording, limits that only refuse more hostile input, and additions that leave every existing outcome unchanged do not.
+
+Known and accepted in v3: a signed record whose `signers` map is removed reads `holds` with `signed: false`, indistinguishable from a hash-only record, while a map missing one actor's key reads `altered` (§4.4). Consumers read `signed`; the command line exits 4. A reader that distinguished a claimed identity with no key would change an outcome and is a v4 question.
 
 Version 1.0 of the reference implementation will mean this document is frozen at v3. After that, a change to the rules is a new tag, and the reference reader keeps reading v3 alongside it.
 

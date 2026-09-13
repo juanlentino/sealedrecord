@@ -95,7 +95,7 @@ The papers argue for what the format commits to and why; the specification says 
 
 `vectors/record.json` is a signed record with three signers, nine entries, receipts on every entry, a derivation link, and anchored audio. `vectors/take.wav` matches entry 2 by file hash; `vectors/take-retagged.wav` has the same samples and an extra metadata chunk, so it matches entry 2 by sample anchor only. `test/vectors.test.js` runs against all three, including a tamper case that must fail at entry 4.
 
-A third-party implementation can run against the same files. That is what makes the format independently implementable rather than defined by whatever this code happens to do. `npm run vectors` regenerates the set with fresh keys; the generator verifies its own output and refuses to write a record that does not hold.
+A second reader, in Go and written from the document alone, lives in `conformance/go/` and runs against the same files in CI; every place it had to guess became a sentence in FORMAT.md. A third-party implementation can run against the same files. That is what makes the format independently implementable rather than defined by whatever this code happens to do. `npm run vectors` regenerates the set with fresh keys; the generator verifies its own output and refuses to write a record that does not hold.
 
 ## Runtime
 

@@ -36,7 +36,8 @@ export const verifyPackage = async (pkg) => {
   /* Import signer keys, if the package carries any and the runtime can.
      Null prototype: signer ids are attacker-controlled strings. */
   const keys = Object.create(null);
-  const signers = pkg.signers && typeof pkg.signers === "object" ? pkg.signers : null;
+  /* signers is a map; an array or anything else is treated as absent. */
+  const signers = pkg.signers && typeof pkg.signers === "object" && !Array.isArray(pkg.signers) ? pkg.signers : null;
   if (signers && Object.keys(signers).length > MAX_SIGNERS) {
     return malformed(`the package carries more than ${MAX_SIGNERS} signer keys; refusing to process it`);
   }
@@ -69,6 +70,11 @@ export const verifyPackage = async (pkg) => {
     const notText = ["prev", "hash"].find((f) => typeof e[f] !== "string");
     if (notText) {
       breakAt = { seq: i + 1, detail: `entry ${i + 1} carries a ${notText} that is not a digest string` };
+      break;
+    }
+    /* m is a number. Coercion would let null read as minute zero. */
+    if (typeof e.m !== "number" || Number.isNaN(e.m)) {
+      breakAt = { seq: i + 1, detail: `entry ${i + 1} carries an m that is not a number` };
       break;
     }
     if (e.seq !== i + 1) {

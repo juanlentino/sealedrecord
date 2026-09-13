@@ -4,7 +4,12 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- **A second reader, from the document alone.** `conformance/go/` implements FORMAT.md in Go with the standard library, written without reading the JavaScript, and passes every vector case; CI runs it beside the reference. Six places where the document did not determine behaviour are now sentences in it: `m` must be a JSON number (checked at step 2, so coercion cannot read `null` as minute zero); a `signers` value that is not an object, arrays included, is treated as absent; an importable JWK is exactly `kty OKP`, `crv Ed25519`, a 32-byte `x`, other members ignored; conforming producers emit `m`, `derivedFrom`, and `artifact.size` as integers; receipts match entries by strict equality of `seq` and the canonical takes `seq` and `hash` from the entry; step 9's failure wording is not normative.
+- FORMAT.md §11 records the stripped-`signers` asymmetry as known and accepted in v3, with the reader's answer (`signed`, exit 4) and the v4 question it would be.
+
 ### Changed
+- Reader: `m` that is not a number is `altered` at step 2; `signers` as an array reads as absent; `importPublicJwk` imports only `kty`, `crv`, `x`. Each affects only records that no conforming producer emits.
 - **Producers refuse what would commit as the text `undefined`.** `buildEvents` and `sealEntry` throw on an event with no `lane` field (null is a lane); `buildPackage` throws on attestations for a session with no id. Reader outcomes unchanged; FORMAT.md §3, §7, §8 state the producer contract.
 
 ### Added
