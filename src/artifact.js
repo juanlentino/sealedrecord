@@ -1,5 +1,6 @@
 /* Artifact anchoring: the file's SHA-256, computed wherever the reader
-   runs, becomes part of the entry the author signs. The file itself does
+   runs, becomes part of the entry the author signs. formatBytes is exported
+   here for its own test and the cap message; it is not on the public surface. The file itself does
    not travel with the record; the chain holds its identity, the producer
    holds the bytes. */
 /* WebCrypto digests a whole ArrayBuffer in memory — no streaming — so cap
@@ -21,10 +22,6 @@ export const formatBytes = (n) => {
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 };
-
-/* Re-check a file someone hands you against an anchored entry. */
-export const fileMatchesArtifact = async (file, artifact) =>
-  (await hashFile(file)).sha256 === artifact.sha256;
 
 /* Every entry that anchors this exact file — the reader's answer to
    "where does this file appear in the session?" */

@@ -218,3 +218,19 @@ describe("verifyPackage", () => {
     expect(r.detail).toMatch(/altered after signing/);
   });
 });
+
+describe("readings are plain prose", () => {
+  it("names the disagreeing digests without em dashes", async () => {
+    const pair = await generateSigningKey();
+    const jwk = await exportJwk(pair.publicKey);
+    const raw = [{ m: 0, action: "session opened", lane: null, room: "r", actor: { id: "ctr:a", name: "A" } },
+      { m: 1, action: "package sealed", lane: null, room: "r", actor: { id: "ctr:a", name: "A" } }];
+    const events = await buildEvents(raw, () => pair.privateKey);
+    const pkg = buildPackage([], events, { code: "1", title: "t" }, "14:01", { "ctr:a": jwk });
+    pkg.entries[0].room = "elsewhere";
+    const r = await verifyPackage(pkg);
+    expect(r.kind).toBe("altered");
+    expect(r.detail).toMatch(/recomputed [0-9a-f]{8}…, recorded [0-9a-f]{8}…/);
+    expect(r.detail).not.toMatch(/—/);
+  });
+});

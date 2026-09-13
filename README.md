@@ -30,7 +30,7 @@ const broken = await verifyPackage(pkg);
 console.log(broken.kind, broken.breakSeq);
 // altered 4
 console.log(broken.detail);
-// entry 4 (note) does not match its recorded digest — recomputed c056c813…, recorded a3442bc7…; its content was altered after signing
+// entry 4 (note) does not match its recorded digest: recomputed c056c813…, recorded a3442bc7…; its content was altered after signing
 console.log(broken.entries.length);
 // 3   (the accepted prefix; nothing after the break is read)
 ```
@@ -95,7 +95,6 @@ Reading:
 - `pcmHashFile(file)`: the same from a File or Blob.
 - `findAnchors(sha256, entries)`: entries whose artifact has this file hash.
 - `findPcmAnchors(pcmSha256, entries)`: entries whose artifact has this sample anchor; empty for `null`.
-- `fileMatchesArtifact(file, artifact)`: true when the file's hash equals `artifact.sha256`.
 - `verdictOf(entries, laneId)`: per-track verdict (`pending`, `unverified`, `broken`, `intact`).
 
 Format constants and primitives, for anyone writing their own reader or producer:
@@ -105,7 +104,7 @@ Format constants and primitives, for anyone writing their own reader or producer
 - `entryHash(prev, index, entry)`: the entry digest, exactly as the specification defines it.
 - `hhmm(m)`: the display time derived from a session minute; the reader checks it.
 - `receiptCanonical({ sessionId, seq, hash, receivedAt })`: the string a receipt signs.
-- `MAX_ARTIFACT_BYTES`, `formatBytes(n)`: the file-size limit and its display form.
+- `MAX_ARTIFACT_BYTES`: the file-size limit `hashFile` enforces.
 
 Producing, included as a reference so a second producer can be checked against it:
 

@@ -56,3 +56,14 @@ describe("receipt canonical tag", () => {
     expect(c).toBe(`sealedrecord/receipt.v1|ses_1|3|${"e".repeat(64)}|2026-01-01T00:00:00Z`);
   });
 });
+
+describe("problems are plain prose", () => {
+  it("reports a bad receipt without em dashes", async () => {
+    const pair = await generateSigningKey();
+    const pkg = { session: { id: "s" }, entries: [{ seq: 1, hash: "a".repeat(64) }],
+      attestations: { key: await exportJwk(pair.publicKey), receipts: [{ seq: 1, received_at: "t", sig: "00" }] } };
+    const r = await verifyReceipts(pkg);
+    expect(r.problems[0]).toMatch(/^entry 1: receipt does not verify/);
+    expect(r.problems[0]).not.toMatch(/—/);
+  });
+});

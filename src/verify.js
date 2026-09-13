@@ -2,14 +2,14 @@
    nothing else: no session state, no crew list, no trust in any field the
    package asserts about itself. It recomputes the whole SHA-256 chain from
    genesis, and where the package carries signers it verifies each enrolled
-   entry's Ed25519 signature — so a forger who rebuilds the hashes still
+   entry's Ed25519 signature, so a forger who rebuilds the hashes still
    fails at the first entry they could not re-sign.
 
    Result kinds:
-     malformed  — not a package this reader can read; `detail` says why
-     altered    — the chain fails at `breakSeq`; `detail` names what failed
-     unsealed   — chain recomputes but the package was never sealed
-     holds      — chain recomputes end to end and the package is sealed */
+     malformed: not a package this reader can read; `detail` says why
+     altered: the chain fails at `breakSeq`; `detail` names what failed
+     unsealed: chain recomputes but the package was never sealed
+     holds: chain recomputes end to end and the package is sealed */
 
 import { GENESIS, entryHash, hhmm, verdictOf } from "./chain.js";
 import { verifyText, importPublicJwk, hasEd25519 } from "./crypto.js";
@@ -85,7 +85,7 @@ export const verifyPackage = async (pkg) => {
     }
     const computed = await entryHash(prev, i, e);
     if (computed !== e.hash) {
-      breakAt = { seq: i + 1, detail: `entry ${i + 1} (${e.action}) does not match its recorded digest — recomputed ${computed.slice(0, 8)}…, recorded ${e.hash.slice(0, 8)}…; its content was altered after signing` };
+      breakAt = { seq: i + 1, detail: `entry ${i + 1} (${e.action}) does not match its recorded digest: recomputed ${computed.slice(0, 8)}…, recorded ${e.hash.slice(0, 8)}…; its content was altered after signing` };
       break;
     }
     if (e.t !== hhmm(e.m)) {

@@ -35,7 +35,7 @@ export const verifyReceipts = async (pkg) => {
       sessionId: pkg.session?.id, seq: e.seq, hash: e.hash, receivedAt: r.received_at,
     })));
     if (ok) out.verified += 1;
-    else out.problems.push(`entry ${e.seq}: receipt does not verify — its time or content claim was altered`);
+    else out.problems.push(`entry ${e.seq}: receipt does not verify; its time or content claim was altered`);
   }
   return out;
 };
