@@ -48,6 +48,8 @@ npm ci
 npm test
 ```
 
+Releases: bump the version and CHANGELOG, commit, push a `vX.Y.Z` tag. CI publishes to npm through trusted publishing; nothing is published by hand.
+
 To develop against a consuming app without editing its manifest: `npm link` here, then `npm link sealedrecord` in the app. A plain `npm install` there restores the published version.
 
 ## License
