@@ -22,6 +22,16 @@ describe("assembled site", () => {
     expect(existsSync(new URL("sealedrecord/package.json", OUT))).toBe(true);
   });
 
+  it("ships an explainer page with no scripts and no foreign origins, linked from the verifier", () => {
+    const x = read("explain.html");
+    expect(x).not.toMatch(/<script/);
+    const allowed = /^https:\/\/(github\.com\/juanlentino\/sealedrecord|papers\.ssrn\.com\/abstract=(6402298|6730343)|orcid\.org\/0009-0006-8151-5920)/;
+    for (const m of x.matchAll(/https?:\/\/[^\s"'<>)]+/g)) expect(m[0]).toMatch(allowed);
+    for (const h of ["What is being verified", "What a verdict means", "What a verdict does not mean", "Why this page can be trusted"]) expect(x).toContain(h);
+    expect(x).not.toMatch(/—/);
+    expect((read("index.html").match(/href="explain\.html"/g) ?? []).length).toBe(2);
+  });
+
   it("inlines the vectors so the example buttons make no request", () => {
     const v = read("vectors.js");
     expect(v).toMatch(/"format": ?"sealedrecord\/package\.v3"/);

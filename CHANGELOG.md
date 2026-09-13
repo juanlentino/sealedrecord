@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- `explain.html` beside the verifier: what is being verified, what each verdict means, what it does not mean, why the page can be trusted. No scripts on it at all; linked once from the lede and once from the footer, so the verifier page itself gains one link and nothing else.
+
 ## [0.8.0] - 2026-09-13
 
 ### Added

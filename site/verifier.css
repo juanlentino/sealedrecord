@@ -85,5 +85,9 @@ summary { cursor: pointer; color: var(--ink-2); font-size: .9rem; }
 .file-result.audio::before { content: "SAME AUDIO"; color: var(--warn); }
 .file-result.none::before { content: "NO MATCH"; color: var(--bad); }
 
+body.prose main { max-width: 72ch; }
+body.prose h2 { margin-top: var(--s4); }
+body.prose p { margin: var(--s2) 0; line-height: 1.6; }
+
 footer { margin-top: var(--s5); border-top: 1px solid var(--rule); padding-top: var(--s3); color: var(--ink-2); font-size: .85rem; }
 footer p { margin: .35rem 0; }

@@ -11,7 +11,7 @@
 <header>
   <p class="kicker">sealedrecord</p>
   <h1>Verify a sealed record</h1>
-  <p class="lede"><span id="claim">Recomputed here, in this page, with the same library its consumers install; what this browser can recompute is stated once scripts have run.</span> Nothing you drop here is sent anywhere. This page has loaded everything it needs; verifying makes no network request. Reloading does.</p>
+  <p class="lede"><span id="claim">Recomputed here, in this page, with the same library its consumers install; what this browser can recompute is stated once scripts have run.</span> Nothing you drop here is sent anywhere. This page has loaded everything it needs; verifying makes no network request. Reloading does. <a href="explain.html">What this checks, and what a verdict means.</a></p>
   <noscript><p class="caveat">Scripts are off, so nothing on this page has verified anything. The command line does the same work: npx sealedrecord verify record.json</p></noscript>
   <p class="meta">Library <code id="lib-version">not loaded</code> · Runtime Ed25519: <span id="ed-support">unknown until scripts run</span></p>
 </header>
@@ -60,7 +60,7 @@
 </main>
 
 <footer>
-  <p>Format: <a href="https://github.com/juanlentino/sealedrecord/blob/main/docs/FORMAT.md">docs/FORMAT.md</a> · Source: <a href="https://github.com/juanlentino/sealedrecord">github.com/juanlentino/sealedrecord</a> · Apache-2.0.</p>
+  <p><a href="explain.html">What this checks</a> · Format: <a href="https://github.com/juanlentino/sealedrecord/blob/main/docs/FORMAT.md">docs/FORMAT.md</a> · Source: <a href="https://github.com/juanlentino/sealedrecord">github.com/juanlentino/sealedrecord</a> · Apache-2.0.</p>
   <p>The design this format implements: <a href="https://papers.ssrn.com/abstract=6402298">Provenance Over Detection (SSRN 6402298)</a> · <a href="https://papers.ssrn.com/abstract=6730343">Provenance as Substrate (SSRN 6730343)</a> · <a href="https://orcid.org/0009-0006-8151-5920">ORCID 0009-0006-8151-5920</a>.</p>
   <p>The same package verifies from a shell: <code>npx sealedrecord verify record.json [file ...]</code>, exit 0 when the record holds with every signature checked. No cookies, no storage, no analytics, no scripts from anywhere but this site.</p>
 </footer>

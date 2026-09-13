@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>What the verifier checks</title>
+<link rel="stylesheet" href="verifier.css">
+</head>
+<body class="prose">
+<header>
+  <p class="kicker"><a href="./">sealedrecord</a></p>
+  <h1>What this checks, and what a verdict means</h1>
+  <p class="lede">A short account for someone handed a record and a verdict. The full rules are in the format specification linked at the end; nothing here overrides them.</p>
+</header>
+
+<main>
+  <h2>What is being verified</h2>
+  <p>A sealed record is a log of a working session: a list of entries, in order, each saying what happened, on which track, by whom, and at what minute. Every entry carries a digest, a SHA-256 hash over its own content and over the digest of the entry before it. Change one character anywhere and every digest from that entry onward stops matching. Each entry whose author is identified also carries an Ed25519 signature from that author over the digest, and the authors' public keys travel inside the record. The verifier recomputes every digest from the first entry and checks every signature against the keys the record carries. It consults nothing else.</p>
+
+  <h2>What a verdict means</h2>
+  <p><strong>Intact.</strong> Every digest recomputes, every signature checks, and the last entry seals the record. Nothing in it has changed since it was sealed.</p>
+  <p><strong>Broken.</strong> The chain fails at a named entry: its content no longer matches its digest, or its signature no longer checks. The reading shows the digest it recomputed beside the one the file claims. Everything before that entry still holds; nothing after it is believed.</p>
+  <p><strong>Intact, unsigned.</strong> The digests recompute but no signature was checked, because the record carries no keys or this browser cannot verify Ed25519. Anyone can recompute a hash chain, so this says the record is internally consistent and nothing about who signed it.</p>
+  <p><strong>Unsealed.</strong> The chain recomputes but was never finished. A working document, not a delivered record.</p>
+  <p><strong>Malformed.</strong> Not a record this verifier reads.</p>
+  <p>A file checked against a record matches either by its exact bytes, or by its audio samples alone. The second means the file is the same recording with changed metadata: a retagged copy, not the anchored file.</p>
+
+  <h2>What a verdict does not mean</h2>
+  <p>It says nothing about whether what people signed is true, only that they signed it and that it has not changed. It says nothing about who the key holders are; a key is a key, and binding it to a person is outside the format. Time receipts, when present, verify against the attestation key the record carries, which is the key holder's word on when entries arrived, not a timestamp proof. Timestamp proofs may ride along in the record; this verifier carries them and does not check them.</p>
+
+  <h2>Why this page can be trusted</h2>
+  <p>Nothing you drop here leaves your browser; after loading, the page makes no network request. It runs the published npm package of the version shown on the front page, unpacked as is, and serves a build stamp naming that version and the commit it was built from. The same package verifies from a shell with <code>npx sealedrecord verify record.json</code>, and a second reader written from the specification alone, in another language, is tested against the same records. If two readers disagree, one of them is wrong and the specification decides which.</p>
+</main>
+
+<footer>
+  <p><a href="./">Back to the verifier</a> · Format: <a href="https://github.com/juanlentino/sealedrecord/blob/main/docs/FORMAT.md">docs/FORMAT.md</a> · Source: <a href="https://github.com/juanlentino/sealedrecord">github.com/juanlentino/sealedrecord</a> · Apache-2.0.</p>
+  <p>No cookies, no storage, no analytics, no scripts on this page at all.</p>
+</footer>
+</body>
+</html>
