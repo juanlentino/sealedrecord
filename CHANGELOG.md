@@ -4,6 +4,8 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-13
+
 ### Added
 - **Differential fuzz between the two readers.** `scripts/fuzz.mjs` makes seeded mutations of the vector (drop or retype fields, move or duplicate entries, poison signers, receipts, tracks); `test/differential.test.js` runs them through the reference reader and the Go reader and fails on any disagreement in kind, break position, `signed`, or verdicts, or on any exception. 300 cases in CI (`FUZZ_N` raises it; 10,000 pass). It found three more places the document did not determine behaviour, now sentences in it: a `tracks` element that is not an object, or has no `id`, matches no entry; a present `artifact` must be a non-null object (step 2); a `null` in `note`, `derivedFrom`, `alg`, or `pcm_sha256` commits as empty, the same as absent, while §4.5's checks still reject `null` in `derivedFrom` and `alg`.
 - `oxlint` in CI and as `npm run lint`.
