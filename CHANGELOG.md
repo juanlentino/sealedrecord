@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- `docs/ROADMAP.md`: the command line's next steps (interactive shell, entry drill-down, report, diff) and what it will not become (producer commands, a watcher, a model, timestamp-proof verification).
+
 ### Changed
 - README's runtime section says what each surface does when Ed25519 is missing (exit 4, "Intact, unsigned").
 - Page: header and footer span the content width instead of a narrower column; the footer's exit-code sentence matches exit 4.
