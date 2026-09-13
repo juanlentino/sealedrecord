@@ -4,6 +4,8 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-13
+
 ### Added
 - **A static verifier on GitHub Pages** (`site/`, https://juanlentino.github.io/sealedrecord/). Drop or paste a record, get the reading; check a file against it by exact bytes or by audio samples. The page runs the unpacked npm tarball of the version it names, not the checkout, and the conformance vectors are inlined so the example buttons make no request. No storage, no analytics, no scripts from any other origin. Deployed by the release workflow only, after the registry serves the version and the tarball diffs clean against the tag, so the page cannot drift from what consumers install.
 - `scripts/site-assemble.mjs` builds `dist-site/` from `site/`, the tarball (`--local` packs the working tree), and the vectors. `test/site-*.test.js` cover the wording, the file check, the byte-identity of the shipped library, and the page's origin allowlist.
