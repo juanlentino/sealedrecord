@@ -16,13 +16,15 @@ A manifest describes a result. A record describes the work.
 
 ### 1. One asset, one signer, one moment versus a chain
 
-A manifest speaks for one asset at the moment it was signed. Multiple contributors appear only as ingredients pointing backward, each with its own manifest. There is no primitive in C2PA for "these three people acted in this order over this hour, and none of it has been reordered, inserted, or removed since." A sealed record is that primitive. Change entry 4 and the chain breaks at entry 4; the reader says so with both digests.
+A manifest speaks for one asset at the moment it was signed. Earlier contributors appear as ingredients pointing backward, each with its own manifest, and the CAWG identity assertion (see 2 below) lets several named actors each sign parts of one manifest. What none of these establish is sequence: there is no primitive in C2PA or CAWG for "these three people acted in this order over this hour, and none of it has been reordered, inserted, or removed since." A sealed record is that primitive. Change entry 4 and the chain breaks at entry 4; the reader says so with both digests.
 
 ### 2. Institutional identity versus carried keys
 
 A C2PA signature is only as good as the certificate chain behind it. A signer outside the validator's trust list is reported as unknown, which is correct behaviour for that design: identity is delegated to certificate authorities. A sealed record delegates nothing. Its signers' public keys travel in the file, the reader recomputes every signature against them, and whether a key belongs to a person is a question the format deliberately leaves to whoever needs to answer it. Receipts and timestamp proofs can then attest on top of the record; they are metadata about the chain, never part of it.
 
-This is the difference in one sentence: C2PA proves who, according to an authority; a sealed record proves that the same key signed, in this order, according to arithmetic.
+The closest thing on the C2PA side is the Creator Assertions Working Group's identity assertion (CAWG Identity Assertion 1.2, https://cawg.io/identity/). There, a named actor signs, with their own credential and separately from the claim signer, a set of the manifest's assertions, and one manifest may carry several such assertions from distinct actors. That is a real step toward identity that does not hang entirely on the claim signer's certificate. Two differences remain. The credential is still an X.509 certificate or a verifiable credential from an issuer, so identity still resolves to something outside the file; a sealed record resolves to a public key inside it and stops there. And the identity assertions in one manifest are unordered with respect to each other: they say who vouches for which assertions, not who acted after whom.
+
+This is the difference in one sentence: C2PA and CAWG prove who, according to a credential; a sealed record proves that the same key signed, in this order, according to arithmetic.
 
 ### 3. Inside the file versus beside it
 
@@ -34,7 +36,7 @@ A C2PA validator needs a trust list, X.509 chain validation, CBOR and COSE parsi
 
 ## Where they agree
 
-Both commit to bytes with SHA-256. Both sign with standard primitives. Both treat the signed object as evidence, not as truth about the world: a valid manifest proves a signature, not honesty, and a holding record proves integrity and order, not the accuracy of what people signed into it. Both are honest about the limits of hard bindings.
+Both commit to bytes with SHA-256. Both sign with standard primitives. Both separate the act of signing from the claim of identity: CAWG puts the named actor's signature beside the claim signer's, and a sealed record puts the actor's signature on the entry and leaves the binding of key to person outside the format. Both treat the signed object as evidence, not as truth about the world: a valid manifest proves a signature, not honesty, and a holding record proves integrity and order, not the accuracy of what people signed into it. Both are honest about the limits of hard bindings.
 
 ## How they compose
 
