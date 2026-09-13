@@ -4,6 +4,8 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-13
+
 ### Added
 - **Command line**: `sealedrecord verify [--json] <record.json> [file ...]`, the library with exit codes (0 holds, 1 altered or malformed, 2 unsealed, 3 usage or I/O). Files after the record are checked as exact, same audio, or no match. Same `index.js`, no dependency; `test/cli.test.js` runs the binary against the vectors.
 
