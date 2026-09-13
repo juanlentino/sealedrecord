@@ -1,19 +1,38 @@
 {
   "name": "sealedrecord",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Verify a sealed session record: recompute the SHA-256 chain, check Ed25519 entry signatures and time receipts, and match audio files to their anchors. WebCrypto only, browser and Node.",
   "license": "Apache-2.0",
   "type": "module",
   "main": "index.js",
-  "exports": { ".": "./index.js" },
-  "files": ["index.js", "src/", "docs/FORMAT.md"],
-  "engines": { "node": ">=20" },
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "index.js",
+    "src/",
+    "docs/FORMAT.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "vitest run",
     "vectors": "node scripts/build-vectors.mjs"
   },
-  "repository": { "type": "git", "url": "git+https://github.com/juanlentino/sealedrecord.git" },
-  "keywords": ["provenance", "hash-chain", "ed25519", "sha-256", "webcrypto", "verification", "audio"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juanlentino/sealedrecord.git"
+  },
+  "keywords": [
+    "provenance",
+    "hash-chain",
+    "ed25519",
+    "sha-256",
+    "webcrypto",
+    "verification",
+    "audio"
+  ],
   "devDependencies": {
     "vitest": "^4.1.11"
   }
