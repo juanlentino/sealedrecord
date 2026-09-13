@@ -1,7 +1,7 @@
 {
   "name": "sealedrecord",
-  "version": "0.5.0",
-  "description": "Verify a sealed session record: recompute the SHA-256 chain, check Ed25519 entry signatures and time receipts, and match audio files to their anchors. WebCrypto only, browser and Node.",
+  "version": "0.5.1",
+  "description": "Verify a sealed session record: recompute the SHA-256 chain, check Ed25519 entry signatures and time receipts, and match audio files to their anchors. One package, three readers: the library, a command line (npx sealedrecord verify), and a static web verifier. WebCrypto only, browser and Node.",
   "license": "Apache-2.0",
   "type": "module",
   "main": "index.js",

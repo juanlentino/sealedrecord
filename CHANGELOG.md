@@ -4,6 +4,11 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-09-13
+
+### Changed
+- README, package description, and the web verifier's footer say the same thing in the same words: one package, three readers (library, `npx sealedrecord verify`, the static page), all running the same code.
+
 ## [0.5.0] - 2026-09-13
 
 ### Added

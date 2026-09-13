@@ -2,11 +2,13 @@
 
 Recomputes the hash chain, signatures, and time receipts of a sealed session record and reports whether it holds, and if not, at which entry it breaks.
 
-Specification: [docs/FORMAT.md](docs/FORMAT.md). How this relates to C2PA: [COMPARISON.md](COMPARISON.md). Live verifier: https://juanlentino.github.io/sealedrecord/
+One package, three ways to read a record: the library (`import ... from "sealedrecord"`), a command line (`npx sealedrecord verify`), and a web verifier served as static files from this repository (https://juanlentino.github.io/sealedrecord/). All three run the same code.
+
+Specification: [docs/FORMAT.md](docs/FORMAT.md). How this relates to C2PA: [COMPARISON.md](COMPARISON.md).
 
 ## Verify in a browser
 
-https://juanlentino.github.io/sealedrecord/ is this library served as static files: drop a record, get a reading. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads. The example buttons use the conformance vectors below.
+https://juanlentino.github.io/sealedrecord/ is this library served as static files: drop a record, get a reading. The command line below does the same from a shell. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads. The example buttons use the conformance vectors below.
 
 ## Command line
 
