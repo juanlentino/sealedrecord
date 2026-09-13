@@ -10,4 +10,16 @@ Notes, not commitments. Things land when they are built and tested, each as a 0.
 
 **Diff.** `sealedrecord diff a.json b.json`: the first entry where two records part ways, with both digests. A session continued in two places, or a quiet edit, in one line.
 
-**Things this will not grow into.** Signing or sealing from the command line: that needs key custody, and custody is outside this package on purpose; the producer functions in the library are a reference for second implementations, not a tool. A folder watcher: a daemon has its own failure modes and nobody has asked. A model that explains readings: that means a network and a vendor, and the readings already say what was checked and what was not. Verifying timestamp proofs: carried, named as unverified, left to standard OpenTimestamps tooling.
+**Explain a break.** For a record that fails, print the preimage the reader recomputed for the breaking entry field by field, beside what the file carried, so a person sees which field moved rather than only that the digest did. This is the one most useful thing to hand a stranger with a broken record.
+
+**More than one at a time.** `sealedrecord verify *.json`, one line per record and a summary, exit code the worst of the set. `check-dir takes/` runs every audio file in a folder against the loaded record and lists exact, same audio, or no match per file. `sealedrecord verify -` reads the record from stdin.
+
+**Per-track verdicts.** The library computes them; the command line does not print them yet.
+
+**`spec`.** Prints the format tag, the digest recipe, the limits, and the library version, so the tool describes its own format without a document lookup.
+
+**Colour, carefully.** Once the interactive session exists: the verdict word only, never as the sole signal, and `NO_COLOR` honoured.
+
+**Maybe, later, if asked.** A conformance runner that scores a second implementation's output against the vectors, once a second implementation exists. A `--quiet` that prints only the kind, for pipelines that want less than `--json`.
+
+**Things this will not grow into.** Signing or sealing from the command line: that needs key custody, and custody is outside this package on purpose; the producer functions in the library are a reference for second implementations, not a tool. A folder watcher: a daemon has its own failure modes and nobody has asked. A model that explains readings: that means a network and a vendor, and the readings already say what was checked and what was not. Verifying timestamp proofs: carried, named as unverified, left to standard OpenTimestamps tooling. Plugins: a surface for third-party code inside a verifier is the wrong shape. Update checks: network. A searchable record browser over a directory: storage and indexing, a product's job. Reading C2PA manifests: a different specification and a large dependency; see COMPARISON.md.
