@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- The release workflow creates the GitHub Release itself, with each deliverable attached as its own file: the npm tarball as the registry serves it, the web verifier as an offline zip, the conformance vectors, `FORMAT.md`, and `COMPARISON.md`. Notes come from the CHANGELOG section via `scripts/release-notes.mjs`.
+
 ### Fixed
 - `test/cli.test.js` wrote scratch files into `dist-site/`, which only exists after the assembler runs; CI went red on Node 20 by test ordering. It uses a temp directory now.
 
