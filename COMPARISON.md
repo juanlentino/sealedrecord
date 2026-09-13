@@ -2,6 +2,8 @@
 
 A frequent and fair question: C2PA (Coalition for Content Provenance and Authenticity) already specifies signed provenance for media. Why does a second format exist? Short answer: the two describe different objects and rest on different trust. They compose. This document says where the line is, without advocacy, so the question has a checkable answer.
 
+It is written from inside the content-authenticity community, not against it, and against C2PA Technical Specification 2.4 (https://spec.c2pa.org/). Where the specification moves, this document should move with it; corrections are welcome as issues on this repository.
+
 ## What each one is
 
 **A C2PA manifest** is a signed statement about one asset: what it is, how it was made or edited, and which earlier assets it came from (ingredients). It is embedded in the asset's own container, bound to the asset's bytes by a hard binding, and signed by a certificate whose validity a validator judges against a trust list.
@@ -55,4 +57,4 @@ The design argument behind the record format, including why provenance is treate
 - Provenance Over Detection. SSRN 6402298. https://papers.ssrn.com/abstract=6402298
 - Provenance as Substrate. SSRN 6730343. https://papers.ssrn.com/abstract=6730343
 
-The C2PA specification is at https://c2pa.org/specifications/. Statements about it above describe the published design at a general level; consult the specification for the normative text.
+The C2PA Technical Specification (2.4 at the time of writing) and the companion Soft Binding API are at https://spec.c2pa.org/. Statements about them above describe the published design at a general level; consult the specification for the normative text.

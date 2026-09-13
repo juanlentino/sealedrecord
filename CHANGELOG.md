@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Changed
+- `COMPARISON.md` states the C2PA specification version it was written against (2.4) and that it is written from inside the content-authenticity community, with corrections invited as issues.
+
 ## [0.4.2] - 2026-09-13
 
 ### Fixed
