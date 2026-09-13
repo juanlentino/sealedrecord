@@ -22,7 +22,7 @@ Fork freely; the licence allows it. Two things keep forks and this repository fr
 
 ## Decisions
 
-One maintainer merges. A pull request that meets the requirements above and stays inside the rules is merged; one that does not is answered with the reason. A disagreement about direction is resolved by the maintainer here and by a fork elsewhere, and both outcomes are fine.
+One maintainer merges. A pull request is a proposal: opening one, filling in the template, or claiming an unclaimed issue creates no obligation to merge it. A pull request that meets the requirements above and stays inside the rules is normally merged; one that does not, or that takes the library somewhere it is not going, is closed with the reason. An issue is a report, not a commitment, and may be closed as answered, duplicate, or not planned. A disagreement about direction is resolved by the maintainer here and by a fork elsewhere, and both outcomes are fine.
 
 ## Licence
 

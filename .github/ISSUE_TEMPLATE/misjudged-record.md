@@ -13,3 +13,5 @@ The exact command line, or "the page at <version>". Output as printed.
 
 **Expected**
 What docs/FORMAT.md says the reading should be, with the section.
+
+An issue is a report, not a commitment. It may be closed as answered, as a duplicate, or as not planned, with the reason.

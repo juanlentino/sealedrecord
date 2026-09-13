@@ -14,3 +14,5 @@ What the reference reader does, if you know; what another reader could reasonabl
 
 **Does any outcome change for an existing conforming record?**
 If yes, this is a new format tag (FORMAT.md section 11). If no, it is a sentence in the document and possibly a check in both readers.
+
+An issue is a report, not a commitment. It may be closed as answered, as a duplicate, or as not planned, with the reason.
