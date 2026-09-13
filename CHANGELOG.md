@@ -5,7 +5,7 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 ## [Unreleased]
 
 ### Added
-- `docs/FORMAT.md` section 11, status and change policy: the tag is the contract, any outcome change is a new tag, 1.0 freezes v3, and a fork that changes the rules uses its own namespace in the tag. `CONTRIBUTING.md` gains forks and decisions sections. `SECURITY.md`: what counts as a security issue for a verifier, how to report privately, what is out of scope. Private vulnerability reporting enabled on the repository.
+- `docs/FORMAT.md` section 11, status and change policy: the tag is the contract, any outcome change is a new tag, 1.0 freezes v3, and a fork that changes the rules uses its own namespace in the tag, stated as a conformance rule rather than a licence term, since the licence cannot enforce it. `CONTRIBUTING.md` gains forks and decisions sections. `SECURITY.md`: what counts as a security issue for a verifier, how to report privately, what is out of scope. Private vulnerability reporting enabled on the repository.
 - `CONTRIBUTING.md`, and a contributing section in the README: the repository is open to pull requests and forks; NOTES.md is an unclaimed list, not a backlog; what a change needs and which changes need a conversation first.
 
 ### Changed
