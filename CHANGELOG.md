@@ -4,6 +4,8 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-13
+
 ### Added
 - **CLI exit code 4**: the chain holds but no signature was checked (no `signers` in the record, or no Ed25519 in the runtime). Exit 0 now means holds with every signature checked, so a pipeline keyed on 0 cannot accept a record whose `signers` were stripped. Readings and `--json` are unchanged; the reader's outcomes are unchanged (FORMAT.md §4.4 still reads `holds`, `signed: false`).
 - **`buildEvents` refuses a claimed identity with no key.** A `signerFor` that returns nothing for an enrolled actor throws; hash-only records pass `signerFor` as `null`, as before. A reference producer never emits a record that looks like a stripped one. FORMAT.md §8 states the producer contract and why readers cannot tell the two apart.
