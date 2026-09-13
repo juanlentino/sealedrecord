@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- README: what the library does not cover, so the boundary is explicit to outside readers.
+
 ## [0.1.1] - 2026-09-12
 
 ### Added

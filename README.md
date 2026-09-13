@@ -28,6 +28,19 @@ const byAudio = exact.length ? exact : findPcmAnchors(await pcmHashFile(file), r
 
 The producer half (`buildEvents`, `sealEntry`, `buildPackage`) is included so a second implementation can check its output against a reference. Key custody, storage, and everything around the record are out of scope here.
 
+## What this does not cover
+
+The library reads and produces the record. It deliberately stops there.
+
+- **Key custody.** Who holds a private key, how it is generated, backed up, or revoked, is the producer's problem. The record carries public keys only.
+- **Identity.** An actor id is an opaque string. The record proves that whoever holds a key signed an entry; binding that key to a person is outside the format.
+- **Timestamp proofs.** OpenTimestamps or similar proofs may ride in `attestations`; this library carries them and does not verify them. Use standard tooling.
+- **Content Credentials.** C2PA manifests embedded in audio files are neither read nor written here. The sample anchor survives them because they live in their own chunks.
+- **Transport and storage.** Nothing here fetches, uploads, or persists. Hand it bytes; it hands back a reading.
+- **Working documents.** Only sealed records are specified. An unsealed session in transit between collaborators is a different document with a different format tag, and this reader rejects it as `malformed` on purpose.
+- **Compressed audio.** The sample anchor is defined for uncompressed WAV only. Anything else has no sample anchor, honestly, and matches by file hash alone.
+- **Any user interface.** Readings are plain objects with human-readable `detail` strings; rendering them is the caller's job.
+
 ## Development
 
 ```sh
