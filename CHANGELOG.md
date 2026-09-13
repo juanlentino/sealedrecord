@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Changed
+- `NOTES.md` moved to the repository root, beside `CHANGELOG.md` and `COMPARISON.md`, away from `docs/FORMAT.md`, which is normative and ships in the tarball. The notes do not ship and should not: a wishlist next to the specification invites the conflation the rename exists to prevent. Heading is now "Notes on the command line", so the framing no longer depends on a disclaimer.
+
 ## [0.7.0] - 2026-09-13
 
 ### Added
