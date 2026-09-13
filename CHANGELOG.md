@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Changed
+- README rewritten for a stranger deciding whether to depend on the library: real output for a holding and a broken record, the explicit non-goals, the specification and the papers it comes from, the conformance vectors, runtime facts, the full API surface, and what 1.0 will mean.
+
 ## [0.2.0] - 2026-09-13
 
 ### Changed
