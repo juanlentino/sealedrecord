@@ -146,7 +146,13 @@ Apache-2.0. See [CHANGELOG.md](CHANGELOG.md) for what changed and when.
 
 ```sh
 npm ci
-npm test
+npm test                                  # library, CLI, page logic, assembled site
+node scripts/site-assemble.mjs --local    # build the web verifier into dist-site/ from the working tree
+npm run vectors                           # regenerate the conformance vectors with fresh keys
 ```
 
-Releases are a version bump, a CHANGELOG entry, and a `vX.Y.Z` tag; CI publishes to npm through trusted publishing. To develop against a consuming project without editing its manifest, `npm link` here and `npm link sealedrecord` there.
+`site/sealedrecord` is a symlink to the checkout so the page's imports resolve during development; the assembler replaces it with the unpacked npm tarball, which is what Pages serves.
+
+A release is a version bump, a CHANGELOG entry, and a `vX.Y.Z` tag. The release workflow then publishes to npm through trusted publishing (no token), rebuilds the web verifier from the published tarball once the registry serves it, and creates the GitHub Release with each deliverable attached as its own file: the tarball, the verifier as an offline zip, the vectors, `FORMAT.md`, and `COMPARISON.md`. Notes are the CHANGELOG section for that version. Nothing is published by hand.
+
+To develop against a consuming project without editing its manifest, `npm link` here and `npm link sealedrecord` there.

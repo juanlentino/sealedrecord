@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Changed
+- README's development section describes the whole release path (npm, Pages, GitHub Release assets) and how to build the verifier locally.
+
 ## [0.5.2] - 2026-09-13
 
 ### Added
