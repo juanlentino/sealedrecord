@@ -4,6 +4,8 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-13
+
 ### Added
 - **Per-track verdicts on the command line and the page.** The library always computed them; only `--json` carried them. Human CLI output prints `tracks: <name> <verdict>, ...`; the page lists them under the reading. Nothing for a record with no tracks. Exit codes unchanged: a broken or unverified track is a fact the record commits to (FORMAT.md 4.1, 5.4), not a failed check, so pipelines that need attribution read `reading.verdicts`. Removed from the notes.
 - **Build stamp.** `dist-site/build.json` names the library version the page was assembled from and the commit that last touched the page's inputs (`site/`, the assembler, the vectors, `package.json`). No timestamp, so it changes only when the deployable would. The page never reads it; it is for maintainers, `curl`, and the offline zip, where it states build provenance, not deployment.
