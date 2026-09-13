@@ -2,6 +2,10 @@
 
 Recomputes the hash chain, signatures, and time receipts of a sealed session record and reports whether it holds, and if not, at which entry it breaks.
 
+## Verify in a browser
+
+https://juanlentino.github.io/sealedrecord/ is this library served as static files: drop a record, get a reading. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads. The example buttons use the conformance vectors below.
+
 ## Install and verify
 
 ```sh

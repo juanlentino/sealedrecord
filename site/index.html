@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>sealedrecord verifier</title>
+<link rel="stylesheet" href="verifier.css">
+</head>
+<body>
+<header>
+  <h1>Verify a sealed record</h1>
+  <p class="lede">Every digest and signature is recomputed here, in this page, with the same library its consumers install. Nothing you drop here is sent anywhere. This page has loaded everything it needs; verifying makes no network request. Reloading does.</p>
+  <p class="meta">Library <code id="lib-version">…</code>. Runtime Ed25519: <span id="ed-support">checking</span>.</p>
+</header>
+
+<main>
+  <section aria-labelledby="in-h">
+    <h2 id="in-h">Record</h2>
+    <div class="row">
+      <label class="drop" id="drop" for="file">
+        <span>Drop a record file here, or choose one.</span>
+        <input type="file" id="file" accept=".json,application/json">
+      </label>
+      <div class="or">or</div>
+      <label for="paste">Paste the record's JSON</label>
+      <textarea id="paste" rows="8" spellcheck="false" placeholder='{"format": "sealedrecord/package.v3", …}'></textarea>
+      <button type="button" id="verify-paste">Verify pasted text</button>
+    </div>
+    <div class="row examples">
+      <span>No record of your own? Use the conformance vector this library is tested against:</span>
+      <button type="button" id="example">Load the example record</button>
+      <button type="button" id="example-broken">Load it with one character changed</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="out-h">
+    <h2 id="out-h">Reading</h2>
+    <div id="verdict" class="verdict" aria-live="polite" aria-atomic="true">
+      <p class="quiet">No record loaded.</p>
+    </div>
+    <div id="break" class="break" hidden></div>
+    <p id="receipts" class="receipts"></p>
+    <details id="ledger-wrap" hidden><summary>Entries as read</summary><ol id="ledger"></ol></details>
+  </section>
+
+  <section aria-labelledby="file-h" id="file-check" hidden>
+    <h2 id="file-h">Check a file against this record</h2>
+    <p>A file matches by its exact bytes, or by its audio samples alone when the bytes were changed after sealing (a retagged WAV). The two results are reported differently on purpose.</p>
+    <div class="row">
+      <label class="drop" for="audio"><span>Drop an audio file here, or choose one.</span><input type="file" id="audio"></label>
+      <span>Or use the vector's own files:</span>
+      <button type="button" id="take">The anchored take</button>
+      <button type="button" id="take-retagged">A retagged copy of it</button>
+    </div>
+    <p id="file-result" aria-live="polite"></p>
+  </section>
+</main>
+
+<footer>
+  <p>Format: <a href="https://github.com/juanlentino/sealedrecord/blob/main/docs/FORMAT.md">docs/FORMAT.md</a> · Source: <a href="https://github.com/juanlentino/sealedrecord">github.com/juanlentino/sealedrecord</a> · Apache-2.0.</p>
+  <p>The design this format implements: <a href="https://papers.ssrn.com/abstract=6402298">Provenance Over Detection (SSRN 6402298)</a> · <a href="https://papers.ssrn.com/abstract=6730343">Provenance as Substrate (SSRN 6730343)</a> · <a href="https://orcid.org/0009-0006-8151-5920">ORCID 0009-0006-8151-5920</a>.</p>
+  <p>No cookies, no storage, no analytics, no scripts from anywhere but this site.</p>
+</footer>
+<script type="module" src="verifier.js"></script>
+</body>
+</html>

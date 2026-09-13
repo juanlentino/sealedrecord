@@ -22,3 +22,40 @@ jobs:
           v=$(node -p "require('./package.json').version")
           [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "tag ${GITHUB_REF_NAME} but package.json is $v"; exit 1; }
       - run: npm publish --access public
+
+  # The verifier page is rebuilt only when a version is published, from that
+  # version's tarball, and only if the tarball matches the tag byte for byte.
+  pages:
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: wait for the registry to serve this version
+        run: |
+          v=$(node -p "require('./package.json').version")
+          for i in $(seq 1 30); do
+            npm view "sealedrecord@$v" version >/dev/null 2>&1 && exit 0
+            sleep 10
+          done
+          echo "sealedrecord@$v not on the registry after 5 minutes"; exit 1
+      - run: node scripts/site-assemble.mjs
+      - name: the published tarball must match the tag
+        run: |
+          diff dist-site/sealedrecord/index.js index.js
+          diff -r dist-site/sealedrecord/src src
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-site
+      - id: deploy
+        uses: actions/deploy-pages@v4

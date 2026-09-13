@@ -1,0 +1,45 @@
+import { describe, it, expect, beforeAll } from "vitest";
+import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+
+/* The assembled site is what Pages serves. Two things must be true of it:
+   the library it runs is byte-identical to this checkout (the tarball is
+   built from it), and the page reaches no origin but the ones it links. */
+const ROOT = new URL("../", import.meta.url);
+const OUT = new URL("../dist-site/", import.meta.url);
+const read = (p) => readFileSync(new URL(p, OUT), "utf8");
+
+beforeAll(() => {
+  execFileSync("node", ["scripts/site-assemble.mjs", "--local"], { cwd: ROOT, stdio: "pipe" });
+}, 60000);
+
+describe("assembled site", () => {
+  it("runs the packed library, byte for byte", () => {
+    expect(read("sealedrecord/index.js")).toBe(readFileSync(new URL("index.js", ROOT), "utf8"));
+    for (const f of readdirSync(new URL("src/", ROOT))) {
+      expect(read(`sealedrecord/src/${f}`)).toBe(readFileSync(new URL(`src/${f}`, ROOT), "utf8"));
+    }
+    expect(existsSync(new URL("sealedrecord/package.json", OUT))).toBe(true);
+  });
+
+  it("inlines the vectors so the example buttons make no request", () => {
+    const v = read("vectors.js");
+    expect(v).toMatch(/"format": ?"sealedrecord\/package\.v3"/);
+    expect(v).toMatch(/export const TAKE_WAV = "UklGR/);        /* base64 of "RIFF" */
+    expect(v).toMatch(/export const TAKE_RETAGGED_WAV = "UklGR/);
+  });
+
+  it("references no origin but the allowed links", () => {
+    const html = read("index.html");
+    const urls = [...html.matchAll(/https?:\/\/[^\s"'<>)]+/g)].map((m) => m[0]);
+    const allowed = /^https:\/\/(github\.com\/juanlentino\/sealedrecord|papers\.ssrn\.com\/abstract=(6402298|6730343)|orcid\.org\/0009-0006-8151-5920)/;
+    for (const u of urls) expect(u).toMatch(allowed);
+    for (const must of ["docs/FORMAT.md", "github.com/juanlentino/sealedrecord", "abstract=6402298", "abstract=6730343", "orcid.org/0009-0006-8151-5920"]) {
+      expect(html).toContain(must);
+    }
+    expect(html).toMatch(/aria-live/);
+    expect(html).not.toMatch(/<link[^>]+(preconnect|prefetch|dns-prefetch)/);
+    expect(html).not.toMatch(/<script[^>]+src="https?:/);
+    for (const f of ["verifier.js", "render.js", "anchors.js"]) expect(read(f)).not.toMatch(/fetch\(|XMLHttpRequest|navigator\.sendBeacon|localStorage|sessionStorage|document\.cookie/);
+  });
+});
