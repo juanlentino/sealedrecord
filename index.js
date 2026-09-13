@@ -3,7 +3,7 @@
 
 export { verifyPackage } from "./src/verify.js";
 export { verifyReceipts, receiptCanonical } from "./src/attest.js";
-export { hashFile, findAnchors, findPcmAnchors, formatBytes } from "./src/artifact.js";
+export { MAX_ARTIFACT_BYTES, hashFile, fileMatchesArtifact, findAnchors, findPcmAnchors, formatBytes } from "./src/artifact.js";
 export { pcmHash, pcmHashFile } from "./src/pcm.js";
 export { GENESIS, entryHash, hhmm, verdictOf, buildEvents } from "./src/chain.js";
 export { PKG_FORMAT, buildPackage, packageText } from "./src/pkg.js";

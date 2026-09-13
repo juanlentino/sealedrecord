@@ -4,6 +4,11 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-09-12
+
+### Added
+- `MAX_ARTIFACT_BYTES` and `fileMatchesArtifact` on the public surface; the first consumer's tests pin the cap.
+
 ## [0.1.0] - 2026-09-12
 
 ### Added
