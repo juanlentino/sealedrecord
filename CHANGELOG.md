@@ -4,6 +4,8 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-09-13
+
 ### Added
 - The release workflow creates the GitHub Release itself, with each deliverable attached as its own file: the npm tarball as the registry serves it, the web verifier as an offline zip, the conformance vectors, `FORMAT.md`, and `COMPARISON.md`. Notes come from the CHANGELOG section via `scripts/release-notes.mjs`.
 
