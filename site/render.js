@@ -30,7 +30,8 @@ export const describeReading = (r) => {
   }
   if (r.kind === "unsealed") lines.push(r.detail);
   const caveat = r.kind !== "malformed" && !r.signed ? CAVEAT : null;
-  return { ...v, lines, brk, caveat };
+  const tracks = (r.verdicts ?? []).map((x) => [x.track?.name ?? x.track?.id, x.verdict.key]);
+  return { ...v, lines, brk, caveat, tracks };
 };
 
 /* Receipts verify against the attestation key the record carries: the key

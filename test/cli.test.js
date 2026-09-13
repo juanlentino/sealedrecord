@@ -100,3 +100,44 @@ describe("what the CLI says about receipts and about bad input", () => {
     expect(run("verify", "--json", `${T}stripped.json`).status).toBe(4);
   });
 });
+
+describe("per-track verdicts", () => {
+  const withTracks = (mutate) => {
+    const p = JSON.parse(readFileSync(`${V}record.json`, "utf8"));
+    mutate(p);
+    const f = `${T}tracks-${Math.random().toString(36).slice(2)}.json`;
+    writeFileSync(f, JSON.stringify(p));
+    return f;
+  };
+  it("prints one line per track with the library's four words", () => {
+    const r = run("verify", `${V}record.json`);
+    expect(r.stdout).toMatch(/^  tracks: Lead Vox intact, Keys intact, Kick intact$/m);
+    expect(r.status).toBe(0);
+  });
+  it("a holding chain with a broken track still exits 0 and says broken", async () => {
+    const { buildEvents, buildPackage, generateSigningKey, exportJwk } = await import("../index.js");
+    const pair = await generateSigningKey();
+    const A = { id: "ctr:a", name: "A" }, G = { id: null, name: "guest" };
+    const events = await buildEvents([
+      { m: 0, action: "session opened", lane: null, room: "r", actor: A },
+      { m: 1, action: "take", lane: "Kick", room: "r", actor: A },
+      { m: 2, action: "edited", lane: "Kick", room: "r", actor: G },
+      { m: 3, action: "package sealed", lane: null, room: "r", actor: A },
+    ], (id) => (id === "ctr:a" ? pair.privateKey : null));
+    const pkg = buildPackage([{ id: "Kick", name: "Kick", origin: "recorded" }], events, { code: "1", title: "t" }, "14:03", { "ctr:a": await exportJwk(pair.publicKey) });
+    writeFileSync(`${T}broken-track.json`, JSON.stringify(pkg));
+    const r = run("verify", `${T}broken-track.json`);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toMatch(/^holds$/m);
+    expect(r.stdout).toMatch(/^  tracks: Kick broken$/m);
+  });
+  it("a record with no tracks prints nothing extra", () => {
+    const f = withTracks((p) => { p.tracks = []; });
+    expect(run("verify", f).stdout).not.toMatch(/tracks:/);
+  });
+  it("--json carries verdicts once, under reading", () => {
+    const j = JSON.parse(run("verify", "--json", `${V}record.json`).stdout);
+    expect(j.reading.verdicts.map((v) => v.verdict.key)).toEqual(["intact", "intact", "intact"]);
+    expect(j.verdicts).toBeUndefined();
+  });
+});

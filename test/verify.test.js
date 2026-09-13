@@ -297,3 +297,23 @@ describe("buildEvents refuses a claimed identity with no key", () => {
     expect(gap[0].sealed).toBe(false);
   });
 });
+
+describe("a holding chain with a broken track", () => {
+  it("holds, and the track verdict says broken with the gap", async () => {
+    const pair = await generateSigningKey();
+    const jwk = await exportJwk(pair.publicKey);
+    const A = { id: "ctr:a", name: "A" }, G = { id: null, name: "guest" };
+    const raw = [
+      { m: 0, action: "session opened", lane: null, room: "r", actor: A },
+      { m: 1, action: "take", lane: "Kick", room: "r", actor: A },
+      { m: 2, action: "edited", lane: "Kick", room: "r", actor: G },
+      { m: 3, action: "package sealed", lane: null, room: "r", actor: A },
+    ];
+    const events = await buildEvents(raw, (id) => (id === "ctr:a" ? pair.privateKey : null));
+    const pkg = buildPackage([{ id: "Kick", name: "Kick", origin: "recorded" }], events, { code: "1", title: "t" }, "14:03", { "ctr:a": jwk });
+    const r = await verifyPackage(pkg);
+    expect(r.kind).toBe("holds");
+    expect(r.verdicts[0].verdict).toMatchObject({ key: "broken" });
+    expect(r.verdicts[0].verdict.gap.seq).toBe(3);
+  });
+});

@@ -15,7 +15,8 @@ const show = (d) => {
   $("verdict").className = `verdict ${d.verdict}`;
   $("verdict").innerHTML = `<p class="headline"><span class="glyph" aria-hidden="true">${d.glyph}</span> <strong>${esc(d.label)}</strong>. ${esc(d.headline)}</p>`
     + d.lines.map((l) => `<p>${esc(l)}</p>`).join("")
-    + (d.caveat ? `<p class="caveat">${esc(d.caveat)}</p>` : "");
+    + (d.caveat ? `<p class="caveat">${esc(d.caveat)}</p>` : "")
+    + (d.tracks.length ? `<ul class="tracks">${d.tracks.map(([n, k]) => `<li><span class="track-name">${esc(n)}</span> <span class="track-${esc(k)}">${esc(k)}</span></li>`).join("")}</ul>` : "");
   $("break").hidden = !d.brk;
   if (d.brk) {
     $("break").innerHTML = (d.brk.seq ? `<p class="where">Chain fails at entry ${d.brk.seq}.</p>` : "") + `<p>${esc(d.brk.detail)}</p>`;

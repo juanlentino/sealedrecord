@@ -52,6 +52,10 @@ const main = async (argv) => {
     console.log(`  ${reading.entries.length} of ${reading.total} entries read; signatures ${reading.signed ? "verified" : "not checked: no signer keys in the record, or no Ed25519 in this runtime; a hash chain alone says nothing about who signed"}`);
     console.log(`  ${receipts.verified} of ${receipts.receipted} receipts verify against the attestation key the record carries (the key holder's word on time, not a timestamp proof)${receipts.problems.length ? `; ${receipts.problems.join("; ")}` : ""}`);
     if (receipts.unchecked.length) console.log(`  attestations also carry: ${receipts.unchecked.join(", ")} (not verified by this reader)`);
+    /* Per-track attribution (FORMAT.md 5.4). A broken or unverified track is
+       a fact the record commits to, not a failed check, so it never moves
+       the exit code; pipelines that need it read reading.verdicts. */
+    if (reading.verdicts.length) console.log(`  tracks: ${reading.verdicts.map((v) => `${v.track?.name ?? v.track?.id} ${v.verdict.key}`).join(", ")}`);
   }
   for (const c of checks) console.log(`${basename(c.file)}: ${c.match}${c.seq.length ? ` (entry ${c.seq.join(", ")})` : ""}`);
   return exitFor(reading);

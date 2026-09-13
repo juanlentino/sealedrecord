@@ -45,3 +45,12 @@ describe("describeReceipts", () => {
     expect(describeReceipts({ total: 2, receipted: 0, verified: 0, problems: [] })).toMatch(/no receipts/i);
   });
 });
+
+describe("track verdicts on the page", () => {
+  it("lists each track with its verdict word; none when the record has no tracks", async () => {
+    const d = describeReading(await verifyPackage(pkg));
+    expect(d.tracks).toEqual([["Lead Vox", "intact"], ["Keys", "intact"], ["Kick", "intact"]]);
+    const t = structuredClone(pkg); t.tracks = [];
+    expect(describeReading(await verifyPackage(t)).tracks).toEqual([]);
+  });
+});

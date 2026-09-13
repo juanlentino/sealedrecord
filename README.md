@@ -20,7 +20,7 @@ npx sealedrecord verify --json record.json          # the reading object, for sc
 
 Exit code 0 when the record holds with every signature checked, 1 when it is altered or malformed, 2 when the chain recomputes but was never sealed, 3 on usage or I/O errors, 4 when the chain holds but no signature was checked. No flags beyond `--json`.
 
-Exit 4 exists so a pipeline keyed on exit 0 cannot accept a record whose `signers` were stripped, or a reading from a runtime without Ed25519. Such a record reads `holds (signatures not checked)` on the first line and `"signed": false` in `--json`. Receipts verify against the attestation key the record carries, which is the key holder's word on time; anything else under `attestations` (timestamp proofs, for instance) is listed as `unchecked` and not verified.
+Exit 4 exists so a pipeline keyed on exit 0 cannot accept a record whose `signers` were stripped, or a reading from a runtime without Ed25519. Per-track verdicts (`pending`, `unverified`, `broken`, `intact`; FORMAT.md 5.4) are printed on their own line and never move the exit code: a broken track is a fact the record commits to, that an unidentified person touched that lane, not a failed check. A pipeline that needs attribution reads `reading.verdicts` in `--json`. Such a record reads `holds (signatures not checked)` on the first line and `"signed": false` in `--json`. Receipts verify against the attestation key the record carries, which is the key holder's word on time; anything else under `attestations` (timestamp proofs, for instance) is listed as `unchecked` and not verified.
 
 ## Install and verify
 

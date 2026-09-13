@@ -62,6 +62,11 @@ button:active { background: var(--rule); }
 .caveat { border-top: 1px solid var(--rule); padding-top: var(--s1); margin-top: var(--s2) !important; color: var(--warn); font-size: .95rem; }
 header .caveat { border: 1px solid var(--warn); border-radius: 6px; padding: var(--s1) var(--s2); }
 
+.tracks { list-style: none; padding: 0; margin: var(--s2) 0 0; display: flex; flex-wrap: wrap; gap: .4rem .9rem; font-size: .9rem; }
+.tracks li { border: 1px solid var(--rule); border-radius: 4px; padding: .15rem .5rem; }
+.track-name { color: var(--ink-2); margin-right: .35em; }
+.track-intact { color: var(--ok); } .track-broken, .track-unverified { color: var(--bad); } .track-pending { color: var(--ink-2); }
+
 .break { border-left: 3px solid var(--bad); padding: var(--s1) var(--s3); margin-top: var(--s3); font-family: var(--mono); font-size: .85rem; overflow-wrap: anywhere; }
 .break .where { font-family: var(--sans); font-size: 1rem; font-weight: 600; margin: 0 0 var(--s1); }
 .receipts { color: var(--ink-2); font-size: .9rem; }

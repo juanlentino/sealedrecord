@@ -14,8 +14,6 @@ Notes, not commitments. Things land when they are built and tested, each as a 0.
 
 **More than one at a time.** `sealedrecord verify *.json`, one line per record and a summary, exit code the worst of the set. `check-dir takes/` runs every audio file in a folder against the loaded record and lists exact, same audio, or no match per file. `sealedrecord verify -` reads the record from stdin.
 
-**Per-track verdicts.** The library computes them; the command line does not print them yet.
-
 **`spec`.** Prints the format tag, the digest recipe, the limits, and the library version, so the tool describes its own format without a document lookup.
 
 **Colour, carefully.** Once the interactive session exists: the verdict word only, never as the sole signal, and `NO_COLOR` honoured.
