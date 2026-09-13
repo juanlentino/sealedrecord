@@ -5,14 +5,15 @@ name: pages
 on:
   push:
     branches: [main]
-    paths: ["site/**", "scripts/site-assemble.mjs", "vectors/**"]
+    paths: ["site/**", "scripts/site-assemble.mjs", "scripts/build-stamp.mjs", "vectors/**"]
+  workflow_dispatch:   # a retry after registry lag, a Pages outage, or a cancelled run; same guards apply
 concurrency:
   group: pages
   cancel-in-progress: false
 jobs:
   pages:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 20
     permissions:
       contents: read
       pages: write
@@ -22,6 +23,8 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the build stamp needs history: last commit touching the page's inputs
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -39,3 +42,7 @@ jobs:
           path: dist-site
       - id: deploy
         uses: actions/deploy-pages@v4
+      - name: what is live must be what was just built (Pages caches for ten minutes; keep asking)
+        run: |
+          for i in $(seq 1 40); do node scripts/live-check.mjs && exit 0; sleep 20; done
+          echo "the live page never matched this build"; exit 1

@@ -47,3 +47,16 @@ describe("assembled site", () => {
     for (const f of ["verifier.js", "render.js", "anchors.js"]) expect(read(f)).not.toMatch(/fetch\(|XMLHttpRequest|navigator\.sendBeacon|localStorage|sessionStorage|document\.cookie/);
   });
 });
+
+describe("build stamp", () => {
+  it("names the library version and the last commit that touched the page's inputs, without a timestamp", () => {
+    const stamp = JSON.parse(read("build.json"));
+    expect(stamp.library).toBe(JSON.parse(readFileSync(new URL("package.json", ROOT), "utf8")).version);
+    expect(stamp.source).toMatch(/^[0-9a-f]{40}$/);
+    expect(stamp.inputs).toEqual(["site/", "scripts/site-assemble.mjs", "vectors/", "package.json"]);
+    expect(Object.keys(stamp).sort()).toEqual(["inputs", "library", "source"]); /* nothing that changes per run */
+  });
+  it("is served as a static file the page does not fetch", () => {
+    for (const f of ["verifier.js", "render.js", "anchors.js"]) expect(read(f)).not.toMatch(/build\.json/);
+  });
+});

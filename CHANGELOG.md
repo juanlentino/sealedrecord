@@ -5,6 +5,10 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 ## [Unreleased]
 
 ### Added
+- **Build stamp.** `dist-site/build.json` names the library version the page was assembled from and the commit that last touched the page's inputs (`site/`, the assembler, the vectors, `package.json`). No timestamp, so it changes only when the deployable would. The page never reads it; it is for maintainers, `curl`, and the offline zip, where it states build provenance, not deployment.
+- **Post-deploy verification.** Both Pages jobs now fetch the live page after deploying and fail unless its stamp is the build they just made (polling through the ten-minute cache). A bad or skipped deploy fails in the run a maintainer is already watching.
+- **Daily freshness check** (`freshness.yml`, also by hand): compares the live stamp with `main` and the registry's latest version; its badge is on the README so a stale page shows on the front page.
+- `pages.yml` can be run by hand (`workflow_dispatch`), with the same registry guard.
 - `docs/ROADMAP.md`: notes on where the command line is going (interactive session, one entry in full, report, diff, explain a break, batch and stdin and folder checks, per-track verdicts, `spec`, colour) and what it will not grow into.
 
 ### Changed

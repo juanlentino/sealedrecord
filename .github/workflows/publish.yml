@@ -28,7 +28,7 @@ jobs:
   pages:
     needs: publish
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 22
     permissions:
       contents: read
       pages: write
@@ -38,6 +38,8 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the build stamp needs history
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -59,6 +61,10 @@ jobs:
           path: dist-site
       - id: deploy
         uses: actions/deploy-pages@v4
+      - name: what is live must be what was just built (Pages caches for ten minutes; keep asking)
+        run: |
+          for i in $(seq 1 40); do node scripts/live-check.mjs && exit 0; sleep 20; done
+          echo "the live page never matched this build"; exit 1
 
   # The GitHub Release carries every deliverable as its own file: the npm
   # tarball exactly as the registry serves it, the web verifier as a zip

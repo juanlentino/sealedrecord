@@ -8,7 +8,7 @@ Specification: [docs/FORMAT.md](docs/FORMAT.md). How this relates to C2PA: [COMP
 
 ## Verify in a browser
 
-https://juanlentino.github.io/sealedrecord/ is this library served as static files: drop a record, get a reading. The command line below does the same from a shell. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads. The example buttons use the conformance vectors below.
+https://juanlentino.github.io/sealedrecord/ is this library served as static files: drop a record, get a reading. Whether the live page matches `main` and the registry is checked daily: ![live page freshness](https://github.com/juanlentino/sealedrecord/actions/workflows/freshness.yml/badge.svg). The page serves `build.json`, a static stamp naming the library version it was assembled from and the commit that last touched its inputs; the page itself never reads it. The command line below does the same from a shell. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads. The example buttons use the conformance vectors below.
 
 ## Command line
 

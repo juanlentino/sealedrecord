@@ -10,6 +10,7 @@
 import { mkdirSync, rmSync, cpSync, readFileSync, writeFileSync, readdirSync, lstatSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
+import { buildStamp } from "./build-stamp.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const OUT = `${ROOT}dist-site/`;
@@ -44,4 +45,7 @@ writeFileSync(`${OUT}vectors.js`, [
 
 const shipped = JSON.parse(readFileSync(`${OUT}sealedrecord/package.json`, "utf8")).version;
 writeFileSync(`${OUT}version.js`, `export const VERSION = "${shipped}";\n`);
+
+/* 4. The stamp, a static file the page never fetches. */
+writeFileSync(`${OUT}build.json`, JSON.stringify(buildStamp(ROOT, shipped), null, 2) + "\n");
 console.log(`dist-site assembled: ${name}@${shipped} from ${local ? "the working tree" : "the registry"}`);
