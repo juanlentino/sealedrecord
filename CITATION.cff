@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you cite the record format, cite the papers that specify its design; cite this repository for the reference implementation."
+title: sealedrecord
+type: software
+license: Apache-2.0
+repository-code: https://github.com/juanlentino/sealedrecord
+authors:
+  - family-names: Lentino
+    given-names: Juan
+    orcid: https://orcid.org/0009-0006-8151-5920
+references:
+  - type: article
+    title: Provenance Over Detection
+    authors:
+      - family-names: Lentino
+        given-names: Juan
+    url: https://papers.ssrn.com/abstract=6402298
+    notes: SSRN 6402298
+  - type: article
+    title: Provenance as Substrate
+    authors:
+      - family-names: Lentino
+        given-names: Juan
+    url: https://papers.ssrn.com/abstract=6730343
+    notes: SSRN 6730343
