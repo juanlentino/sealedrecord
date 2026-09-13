@@ -1,6 +1,6 @@
 {
   "name": "sealedrecord",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Verify a sealed session record: recompute the SHA-256 chain, check Ed25519 entry signatures and time receipts, and match audio files to their anchors. WebCrypto only, browser and Node.",
   "license": "Apache-2.0",
   "type": "module",

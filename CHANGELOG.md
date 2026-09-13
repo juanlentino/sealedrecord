@@ -4,6 +4,8 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-09-13
+
 ### Added
 - Trusted publishing: pushing a `v*` tag runs the suite, checks the tag against `package.json`, and publishes to npm via GitHub OIDC. No token anywhere.
 - README: what the library does not cover, so the boundary is explicit to outside readers.
