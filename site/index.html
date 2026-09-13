@@ -9,13 +9,14 @@
 </head>
 <body>
 <header>
+  <p class="kicker">sealedrecord</p>
   <h1>Verify a sealed record</h1>
   <p class="lede">Every digest and signature is recomputed here, in this page, with the same library its consumers install. Nothing you drop here is sent anywhere. This page has loaded everything it needs; verifying makes no network request. Reloading does.</p>
-  <p class="meta">Library <code id="lib-version">…</code>. Runtime Ed25519: <span id="ed-support">checking</span>.</p>
+  <p class="meta">Library <code id="lib-version">…</code> · Runtime Ed25519: <span id="ed-support">checking</span></p>
 </header>
 
-<main>
-  <section aria-labelledby="in-h">
+<main class="cols">
+  <section aria-labelledby="in-h" class="col-in">
     <h2 id="in-h">Record</h2>
     <div class="row">
       <label class="drop" id="drop" for="file">
@@ -34,7 +35,7 @@
     </div>
   </section>
 
-  <section aria-labelledby="out-h">
+  <section aria-labelledby="out-h" class="col-out">
     <h2 id="out-h">Reading</h2>
     <div id="verdict" class="verdict" aria-live="polite" aria-atomic="true">
       <p class="quiet">No record loaded.</p>
@@ -44,7 +45,7 @@
     <details id="ledger-wrap" hidden><summary>Entries as read</summary><ol id="ledger"></ol></details>
   </section>
 
-  <section aria-labelledby="file-h" id="file-check" hidden>
+  <section aria-labelledby="file-h" id="file-check" class="col-wide" hidden>
     <h2 id="file-h">Check a file against this record</h2>
     <p>A file matches by its exact bytes, or by its audio samples alone when the bytes were changed after sealing (a retagged WAV). The two results are reported differently on purpose.</p>
     <div class="row">

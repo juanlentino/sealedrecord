@@ -4,7 +4,10 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-09-13
+
 ### Changed
+- The web verifier reads as a finished page: system sans for prose with mono reserved for digests and code, a two-column layout on wide screens (record left, reading right), card surfaces with a coloured left rule for verdicts and file results, quieter buttons, a spacing scale. No fonts or scripts from anywhere but the site; same markup ids, same behaviour, same tests.
 - README's development section describes the whole release path (npm, Pages, GitHub Release assets) and how to build the verifier locally.
 
 ## [0.5.2] - 2026-09-13
