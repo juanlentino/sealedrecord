@@ -102,7 +102,7 @@ A second reader, in Go and written from the document alone, lives in `conformanc
 - Zero runtime dependencies. One dev dependency (vitest).
 - Requires WebCrypto with SHA-256 and Ed25519: Node 20 or later, or any browser whose `crypto.subtle` implements Ed25519. Where Ed25519 is missing, `hasEd25519()` returns false, `verifyPackage` checks the hash chain only, the reading carries `signed: false`, the CLI exits 4, and the web verifier shows "Intact, unsigned" with the limit stated inside the reading.
 - Every computation is SHA-256 or Ed25519 over UTF-8 strings or raw bytes, with lowercase hex output, so results do not depend on the runtime. The test suite itself runs under Node.
-- `hashFile` reads the whole file into memory and refuses files over 200 MiB (`MAX_ARTIFACT_BYTES`). That is a limit of this reader, not of the format.
+- `hashFile` reads the whole file into memory and refuses files over 200 MiB (`MAX_ARTIFACT_BYTES`); the CLI and the page refuse record files over 32 MiB (`MAX_RECORD_BYTES`) before parsing. Limits of this reader, not of the format.
 
 ## API
 
@@ -124,7 +124,7 @@ Format constants and primitives, for anyone writing their own reader or producer
 - `entryHash(prev, index, entry)`: the entry digest, exactly as the specification defines it.
 - `hhmm(m)`: the display time derived from a session minute; the reader checks it.
 - `receiptCanonical({ sessionId, seq, hash, receivedAt })`: the string a receipt signs.
-- `MAX_ARTIFACT_BYTES`: the file-size limit `hashFile` enforces.
+- `MAX_ARTIFACT_BYTES`, `MAX_RECORD_BYTES`: the file-size limits (200 MiB for a checked file, 32 MiB for a record) the reference reader enforces before reading bytes. Reader policy, not format rules.
 
 Producing, included as a reference so a second producer can be checked against it:
 

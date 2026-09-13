@@ -141,3 +141,20 @@ describe("per-track verdicts", () => {
     expect(j.verdicts).toBeUndefined();
   });
 });
+
+describe("input size caps", () => {
+  it("refuses a record file over the cap with exit 3 and no parse attempt", () => {
+    const f = `${T}huge.json`;
+    writeFileSync(f, Buffer.alloc(33 * 1024 * 1024, 0x20)); /* 33 MiB of spaces */
+    const r = run("verify", f);
+    expect(r.status).toBe(3);
+    expect(r.stderr).toMatch(/too large/);
+  });
+  it("refuses a checked file over the artifact cap, naming the cap, exit 0 otherwise unaffected", () => {
+    const f = `${T}huge.wav`;
+    writeFileSync(f, Buffer.alloc(201 * 1024 * 1024, 0)); /* 201 MiB */
+    const r = run("verify", `${V}record.json`, f);
+    expect(r.stdout).toMatch(/huge\.wav: too large to check \(201\.0 MB; the cap is 200\.0 MB\)/);
+    expect(r.status).toBe(0);
+  });
+});

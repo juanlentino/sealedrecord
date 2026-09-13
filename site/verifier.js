@@ -2,7 +2,7 @@
    and anchors.js; this file only moves bytes between the DOM and the
    library. The library is ./sealedrecord/, the unpacked npm tarball. */
 
-import { verifyPackage, verifyReceipts, hashFile, pcmHashFile, hasEd25519 } from "./sealedrecord/index.js";
+import { verifyPackage, verifyReceipts, hashFile, pcmHashFile, hasEd25519, MAX_RECORD_BYTES } from "./sealedrecord/index.js";
 import { describeReading, describeReceipts, entryLine } from "./render.js";
 import { classifyFile, describeFile } from "./anchors.js";
 import { RECORD, TAKE_WAV, TAKE_RETAGGED_WAV } from "./vectors.js";
@@ -36,6 +36,11 @@ const verify = async (pkg) => {
   $("file-result").textContent = "";
 };
 
+const verifyFile = (f) => {
+  if (f.size > MAX_RECORD_BYTES) return show(describeReading({ kind: "malformed", detail: `the file is ${(f.size / 1048576).toFixed(1)} MB; this reader refuses records over ${MAX_RECORD_BYTES / 1048576} MB` }));
+  f.text().then(verifyText);
+};
+
 const verifyText = async (text) => {
   let pkg;
   try { pkg = JSON.parse(text); } catch { return show(describeReading({ kind: "malformed", detail: "not valid JSON" })); }
@@ -51,7 +56,7 @@ const checkFile = async (file) => {
 
 const fromB64 = (b64, name) => new File([Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))], name, { type: "audio/wav" });
 
-$("file").addEventListener("change", (e) => e.target.files[0] && e.target.files[0].text().then(verifyText));
+$("file").addEventListener("change", (e) => e.target.files[0] && verifyFile(e.target.files[0]));
 $("verify-paste").addEventListener("click", () => verifyText($("paste").value));
 $("example").addEventListener("click", () => verify(structuredClone(RECORD)));
 $("example-broken").addEventListener("click", () => {
@@ -71,7 +76,7 @@ for (const id of ["drop", "file-check"]) {
     e.preventDefault(); el.classList.remove("over");
     const f = e.dataTransfer.files[0];
     if (!f) return;
-    if (id === "drop") f.text().then(verifyText); else if (current) checkFile(f);
+    if (id === "drop") verifyFile(f); else if (current) checkFile(f);
   });
 }
 

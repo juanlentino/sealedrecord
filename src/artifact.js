@@ -7,6 +7,12 @@
    loudly rather than letting a 2GB session bounce freeze the tab. */
 export const MAX_ARTIFACT_BYTES = 200 * 1024 * 1024;
 
+/* A record is text; 10000 entries with generous notes fit in a few MiB.
+   Readers refuse to parse more than this so a hostile file cannot exhaust
+   memory before the entry cap is ever reached. A reader limit, not a
+   format rule. */
+export const MAX_RECORD_BYTES = 32 * 1024 * 1024;
+
 const HEX = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
 
 export const hashFile = async (file) => {

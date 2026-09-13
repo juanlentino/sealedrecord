@@ -208,6 +208,7 @@ A conforming producer sorts raw events by `m` ascending, assigns `seq` from 1, d
 | entries | 1..10000 | `malformed` outside |
 | signers | at most 200 | `malformed` above |
 | file anchor input | reader policy, 200 MiB in the reference | error, not a reading |
+| record file size | reader policy, 32 MiB in the reference, refused before parsing | error, not a reading |
 | field of the wrong type | any | a reading, never an exception: `malformed` at the top level (§5.1), `altered` at the entry (§5.2); a non-string `sig` or receipt signature is a failed signature |
 
 ## 10. Test vectors

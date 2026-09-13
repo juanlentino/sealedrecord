@@ -4,21 +4,30 @@
    exit 0 holds with signatures checked · 1 altered or malformed · 2 unsealed
         · 3 usage or I/O · 4 holds, but no signature was checked */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { basename } from "node:path";
-import { verifyPackage, verifyReceipts, pcmHash, findAnchors, findPcmAnchors } from "../index.js";
+import { verifyPackage, verifyReceipts, pcmHash, findAnchors, findPcmAnchors, MAX_ARTIFACT_BYTES, MAX_RECORD_BYTES } from "../index.js";
 
 const USAGE = "usage: sealedrecord verify [--json] <record.json> [file ...]";
 const EXIT = { holds: 0, altered: 1, malformed: 1, unsealed: 2 };
 const exitFor = (r) => (r.kind === "holds" && !r.signed ? 4 : EXIT[r.kind]);
 const HEX = (b) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
 
-const readOr3 = (path) => {
-  try { return readFileSync(path); } catch (e) { console.error(`cannot read ${path}: ${e.message}`); process.exit(3); }
+const mb = (n) => `${(n / (1024 * 1024)).toFixed(1)} MB`;
+
+const readOr3 = (path, cap) => {
+  try {
+    const size = statSync(path).size;
+    if (size > cap) { console.error(`${path} is too large to read (${mb(size)}; the cap is ${mb(cap)})`); process.exit(3); }
+    return readFileSync(path);
+  } catch (e) { console.error(`cannot read ${path}: ${e.message}`); process.exit(3); }
 };
 
 const checkFile = async (path, entries) => {
-  const bytes = readOr3(path);
+  let size;
+  try { size = statSync(path).size; } catch (e) { console.error(`cannot read ${path}: ${e.message}`); process.exit(3); }
+  if (size > MAX_ARTIFACT_BYTES) return { file: path, match: `too large to check (${mb(size)}; the cap is ${mb(MAX_ARTIFACT_BYTES)})`, seq: [] };
+  const bytes = readOr3(path, MAX_ARTIFACT_BYTES);
   const buf = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
   const sha256 = HEX(await crypto.subtle.digest("SHA-256", buf));
   const exact = findAnchors(sha256, entries);
@@ -35,7 +44,7 @@ const main = async (argv) => {
   const [, recordPath, ...files] = args;
 
   let pkg;
-  try { pkg = JSON.parse(readOr3(recordPath).toString("utf8")); } catch { pkg = null; }
+  try { pkg = JSON.parse(readOr3(recordPath, MAX_RECORD_BYTES).toString("utf8")); } catch { pkg = null; }
   const reading = await verifyPackage(pkg);
   const ok = reading.kind !== "malformed";
   const receipts = ok ? await verifyReceipts({ ...pkg, entries: reading.entries }) : null;
