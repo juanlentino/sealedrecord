@@ -13,8 +13,9 @@ let current = null; /* the last accepted reading, for the file check */
 
 const show = (d) => {
   $("verdict").className = `verdict ${d.verdict}`;
-  $("verdict").innerHTML = `<p class="headline"><span class="glyph" aria-hidden="true">${d.glyph}</span> <strong>${d.verdict}</strong>. ${d.headline}</p>`
-    + d.lines.map((l) => `<p>${esc(l)}</p>`).join("");
+  $("verdict").innerHTML = `<p class="headline"><span class="glyph" aria-hidden="true">${d.glyph}</span> <strong>${esc(d.label)}</strong>. ${esc(d.headline)}</p>`
+    + d.lines.map((l) => `<p>${esc(l)}</p>`).join("")
+    + (d.caveat ? `<p class="caveat">${esc(d.caveat)}</p>` : "");
   $("break").hidden = !d.brk;
   if (d.brk) {
     $("break").innerHTML = (d.brk.seq ? `<p class="where">Chain fails at entry ${d.brk.seq}.</p>` : "") + `<p>${esc(d.brk.detail)}</p>`;
@@ -73,5 +74,18 @@ for (const id of ["drop", "file-check"]) {
   });
 }
 
+/* Scripts ran. Replace the no-script text, then state what this runtime
+   can do before any claim about signatures is on screen. */
+$("verdict").innerHTML = `<p class="quiet">No record loaded.</p>`;
 $("lib-version").textContent = VERSION;
-hasEd25519().then((ok) => { $("ed-support").textContent = ok ? "available, signatures will be checked" : "missing, hash chain only"; });
+if (!globalThis.crypto?.subtle) {
+  $("claim").textContent = "This browser has no WebCrypto, so nothing here can be recomputed. Use the command line or a current browser.";
+  for (const b of document.querySelectorAll("button, input")) b.disabled = true;
+} else {
+  hasEd25519().then((ok) => {
+    $("claim").textContent = ok
+      ? "Every digest and signature is recomputed here, in this page, with the same library its consumers install."
+      : "Every digest is recomputed here, in this page, with the same library its consumers install. This browser cannot verify Ed25519 signatures, so readings here check the hash chain only and say so.";
+    $("ed-support").textContent = ok ? "available, signatures will be checked" : "missing, hash chain only";
+  });
+}

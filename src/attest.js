@@ -12,10 +12,16 @@ import { importPublicJwk, verifyText } from "./crypto.js";
 export const receiptCanonical = ({ sessionId, seq, hash, receivedAt }) =>
   `sealedrecord/receipt.v1|${sessionId}|${seq}|${hash}|${receivedAt}`;
 
+/* The reading says what it checked and names what it did not. `unchecked`
+   lists every attestations member other than the key and the receipts, by
+   name only: those members (timestamp proofs, for instance) are carried
+   unparsed and unverified here. Receipts verify against the attestation key
+   the record carries, which is the key holder's word on time, never a proof. */
 export const verifyReceipts = async (pkg) => {
   const entries = pkg.entries ?? [];
-  const out = { total: entries.length, receipted: 0, verified: 0, problems: [] };
-  const att = pkg.attestations;
+  const att = pkg.attestations && typeof pkg.attestations === "object" ? pkg.attestations : null;
+  const unchecked = Object.keys(att ?? {}).filter((k) => k !== "key" && k !== "receipts").sort();
+  const out = { total: entries.length, receipted: 0, verified: 0, problems: [], unchecked };
   if (!att?.key || !Array.isArray(att.receipts)) return out;
 
   let key;
@@ -26,7 +32,7 @@ export const verifyReceipts = async (pkg) => {
     return out;
   }
 
-  const bySeq = new Map(att.receipts.map((r) => [r.seq, r]));
+  const bySeq = new Map(att.receipts.filter((r) => r && typeof r === "object").map((r) => [r.seq, r]));
   for (const e of entries) {
     const r = bySeq.get(e.seq);
     if (!r) continue;

@@ -20,6 +20,8 @@ npx sealedrecord verify --json record.json          # the reading object, for sc
 
 Exit code 0 when the record holds, 1 when it is altered or malformed, 2 when the chain recomputes but was never sealed, 3 on usage or I/O errors. No flags beyond `--json`.
 
+Exit 0 means the chain holds; it does not by itself mean signatures were checked. A record with no `signers`, or a runtime without Ed25519, reads `holds (signatures not checked)` on the first line and `"signed": false` in `--json`. Receipts verify against the attestation key the record carries, which is the key holder's word on time; anything else under `attestations` (timestamp proofs, for instance) is listed as `unchecked` and not verified.
+
 ## Install and verify
 
 ```sh
@@ -107,7 +109,7 @@ A third-party implementation can run against the same files. That is what makes 
 Reading:
 
 - `verifyPackage(pkg)`: recompute the chain and signatures; returns the reading described above.
-- `verifyReceipts(pkg)`: verify time receipts against the key carried in `pkg.attestations`; returns counts and problems.
+- `verifyReceipts(pkg)`: verify time receipts against the key carried in `pkg.attestations`; returns counts, problems, and `unchecked`, the names of attestation members this reader does not verify.
 - `hashFile(file)`: `{ name, size, sha256 }` of a File or Blob.
 - `pcmHash(arrayBuffer)`: sample anchor of a WAV, or `null` when the buffer is not one this reader understands.
 - `pcmHashFile(file)`: the same from a File or Blob.

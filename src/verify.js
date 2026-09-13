@@ -64,6 +64,13 @@ export const verifyPackage = async (pkg) => {
       breakAt = { seq: i + 1, detail: `entry ${i + 1} carries no actor; every entry names who acted` };
       break;
     }
+    /* A digest is a string. Anything else is a record that fails here,
+       never an exception out of the reader. */
+    const notText = ["prev", "hash"].find((f) => typeof e[f] !== "string");
+    if (notText) {
+      breakAt = { seq: i + 1, detail: `entry ${i + 1} carries a ${notText} that is not a digest string` };
+      break;
+    }
     if (e.seq !== i + 1) {
       breakAt = { seq: i + 1, detail: `entry ${i + 1} carries sequence number ${e.seq}; entries have been reordered or removed` };
       break;
@@ -109,7 +116,7 @@ export const verifyPackage = async (pkg) => {
 
   const tracks = Array.isArray(pkg.tracks) ? pkg.tracks : [];
   const verdicts = tracks.map((tr) => ({
-    track: tr, verdict: verdictOf(entries, tr.id),
+    track: tr, verdict: verdictOf(entries, tr?.id),
   }));
   const base = {
     session: pkg.session ?? {}, sealedAt: pkg.sealedAt ?? null,

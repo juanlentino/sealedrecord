@@ -117,7 +117,7 @@ Return `{ kind: "malformed", detail }` when: the value is not an object; `format
 Walk `entries` in order with `prev = GENESIS`. Stop at the first entry that fails any check, in this order, and report `{ kind: "altered", breakSeq, detail }` where `breakSeq` is the one-based position:
 
 1. Each of `seq`, `m`, `room`, `action`, `actor`, `prev`, `hash` is present (not undefined).
-2. `actor` is a non-null object.
+2. `actor` is a non-null object, and `prev` and `hash` are strings (a digest is a string; any other type fails here).
 3. `seq == index + 1`.
 4. `prev == running prev`.
 5. `derivedFrom`, if present, is an integer in `[1, index]`.
@@ -189,7 +189,7 @@ canonical = "sealedrecord/receipt.v1|" + session.id + "|" + seq + "|" + hash + "
 
 with `hash` taken from the entry (verify the chain first; receipts vouch for time, not content) and `session.id` stringified as in §4.1 (a missing id commits as `undefined`). Drop any JWK `alg` member before importing `attestations.key`.
 
-The reader reports `total` entries, `receipted` (entries with a receipt), `verified`, and a `problems` list. Entries without a receipt are not a problem. An unimportable key is one problem and no receipts verify.
+The reader reports `total` entries, `receipted` (entries with a receipt), `verified`, a `problems` list, and `unchecked`: the names of every other member of `attestations`, carried unparsed and unverified. Entries without a receipt are not a problem. An unimportable key is one problem and no receipts verify. Receipts that are not objects are ignored.
 
 What a receipt proves: the holder of `attestations.key` saw this hash at this time. It is as strong as trust in that key and its clock, no stronger. Other attestation members (for example OpenTimestamps proofs) may ride alongside; this specification does not verify them.
 
@@ -204,6 +204,7 @@ A conforming producer sorts raw events by `m` ascending, assigns `seq` from 1, d
 | entries | 1..10000 | `malformed` outside |
 | signers | at most 200 | `malformed` above |
 | file anchor input | reader policy, 200 MiB in the reference | error, not a reading |
+| field of the wrong type | any | a reading, never an exception: `malformed` at the top level (§5.1), `altered` at the entry (§5.2); a non-string `sig` or receipt signature is a failed signature |
 
 ## 10. Test vectors
 

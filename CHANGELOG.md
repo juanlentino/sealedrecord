@@ -4,7 +4,15 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- `verifyReceipts` returns `unchecked`: the names of every `attestations` member other than `key` and `receipts`, carried unparsed and unverified (timestamp proofs, for instance). `--json` gains `receipts.unchecked`; nothing existing is renamed or removed.
+- Hostile field types produce readings, never exceptions: `prev` and `hash` must be strings (FORMAT.md §5.2 step 2, §9), a non-string signature or receipt signature fails verification instead of throwing, receipts that are not objects are ignored, a null track yields `pending`. The CLI catches anything left and exits 3 with a one-line message. Tests cover null prev, numeric hash, non-numeric m, non-object entry, non-string format, numeric signature, null track.
+- Page: a forced `hasEd25519() === false` test path; a no-script fallback in static markup.
+
 ### Changed
+- CLI and page state what receipts prove: they verify against the attestation key the record carries, the key holder's word on time, not a timestamp proof; both name attestation members that went unverified.
+- CLI prints `holds (signatures not checked)` when a reading was produced without signature checks; the following line says why and what a hash chain alone proves. Exit codes unchanged.
+- Page: the hero claim is filled in once the runtime has answered whether it can verify Ed25519; the static markup makes no promise about signatures. A reading produced without signature checks carries the caveat inside the reading, for every kind, and `holds` without signatures is its own verdict, "Intact, unsigned", with its own styling. Without scripts or WebCrypto the page says so instead of showing placeholders.
 - Page-only changes redeploy the verifier from `main` without a library release (`pages.yml`). The page still runs the published tarball at `package.json`'s version; the deploy refuses if that version is not on the registry. 0.5.3 was a library release with no library change, which this removes the need for.
 
 ## [0.5.3] - 2026-09-13

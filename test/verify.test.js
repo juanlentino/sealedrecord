@@ -234,3 +234,50 @@ describe("readings are plain prose", () => {
     expect(r.detail).not.toMatch(/—/);
   });
 });
+
+/* FORMAT.md §5: a reader's job is to survive bad input. Every case here
+   returns a reading and never throws. Presence is §5.2 step 1; the type of
+   prev and hash is the same step (a digest is a string). */
+describe("hostile field types produce readings, not exceptions", () => {
+  const good = async () => {
+    const pair = await generateSigningKey();
+    const jwk = await exportJwk(pair.publicKey);
+    const raw = [{ m: 0, action: "session opened", lane: null, room: "r", actor: { id: "ctr:a", name: "A" } },
+      { m: 1, action: "package sealed", lane: null, room: "r", actor: { id: "ctr:a", name: "A" } }];
+    const events = await buildEvents(raw, () => pair.privateKey);
+    return buildPackage([{ id: null, name: "x", origin: "recorded" }], events, { code: "1", title: "t" }, "14:01", { "ctr:a": jwk });
+  };
+
+  it("null prev", async () => {
+    const p = await good(); p.entries[1].prev = null;
+    expect(await verifyPackage(p)).toMatchObject({ kind: "altered", breakSeq: 2 });
+  });
+  it("numeric hash", async () => {
+    const p = await good(); p.entries[0].hash = 42;
+    expect(await verifyPackage(p)).toMatchObject({ kind: "altered", breakSeq: 1 });
+  });
+  it("non-numeric m still yields a reading", async () => {
+    const p = await good(); p.entries[0].m = "zero";
+    expect(["altered"]).toContain((await verifyPackage(p)).kind);
+  });
+  it("non-object entry", async () => {
+    const p = await good(); p.entries[1] = 7;
+    expect(await verifyPackage(p)).toMatchObject({ kind: "altered", breakSeq: 2 });
+    p.entries[1] = null;
+    expect(await verifyPackage(p)).toMatchObject({ kind: "altered", breakSeq: 2 });
+  });
+  it("non-string format", async () => {
+    expect((await verifyPackage({ format: 3, entries: [{}] })).kind).toBe("malformed");
+    expect((await verifyPackage({ format: null, entries: [{}] })).kind).toBe("malformed");
+  });
+  it("numeric signature", async () => {
+    const p = await good(); p.entries[0].sig = 99;
+    expect(await verifyPackage(p)).toMatchObject({ kind: "altered", breakSeq: 1 });
+  });
+  it("null track and non-object signer value", async () => {
+    const p = await good(); p.tracks = [null, 5, { id: null, name: "x" }]; p.signers["ctr:b"] = "not a key";
+    const r = await verifyPackage(p);
+    expect(r.kind).toBe("holds");
+    expect(r.verdicts.length).toBe(3);
+  });
+});

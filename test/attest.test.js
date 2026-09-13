@@ -67,3 +67,30 @@ describe("problems are plain prose", () => {
     expect(r.problems[0]).not.toMatch(/—/);
   });
 });
+
+describe("what the receipt reading says about its own basis", () => {
+  it("names attestation members this reader did not verify, without parsing them", async () => {
+    const pair = await generateSigningKey();
+    const key = await exportJwk(pair.publicKey);
+    const pkg = { session: { id: "s" }, entries: [{ seq: 1, hash: "a".repeat(64) }],
+      attestations: { key, receipts: [], anchors: [{ proof_b64: "AAAA" }], other: 1 } };
+    const r = await verifyReceipts(pkg);
+    expect(r.unchecked).toEqual(["anchors", "other"]);
+  });
+
+  it("reports an empty unchecked list when there are no attestations at all", async () => {
+    const r = await verifyReceipts({ entries: [{ seq: 1, hash: "a".repeat(64) }] });
+    expect(r.unchecked).toEqual([]);
+    expect(r).toMatchObject({ total: 1, receipted: 0, verified: 0 });
+  });
+
+  it("survives receipts that are not objects and signatures that are not strings", async () => {
+    const pair = await generateSigningKey();
+    const key = await exportJwk(pair.publicKey);
+    const pkg = { session: { id: "s" }, entries: [{ seq: 1, hash: "a".repeat(64) }, { seq: 2, hash: "b".repeat(64) }],
+      attestations: { key, receipts: [null, { seq: 1, received_at: "t", sig: 12345 }, "x"] } };
+    const r = await verifyReceipts(pkg);
+    expect(r).toMatchObject({ total: 2, receipted: 1, verified: 0 });
+    expect(r.problems[0]).toMatch(/^entry 1/);
+  });
+});

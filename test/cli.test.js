@@ -64,3 +64,36 @@ describe("sealedrecord verify", () => {
     expect(j.receipts.verified).toBe(9);
   });
 });
+
+describe("what the CLI says about receipts and about bad input", () => {
+  it("states the trust basis of receipts and names unverified attestation members", () => {
+    const p = JSON.parse(readFileSync(`${V}record.json`, "utf8"));
+    p.attestations.anchors = [{ proof_b64: "AAAA" }];
+    writeFileSync(`${T}with-anchors.json`, JSON.stringify(p));
+    const r = run("verify", `${T}with-anchors.json`);
+    expect(r.status).toBe(0);
+    expect(r.stdout).toMatch(/receipts verify against the attestation key the record carries/);
+    expect(r.stdout).toMatch(/not a timestamp proof/);
+    expect(r.stdout).toMatch(/attestations also carry: anchors \(not verified by this reader\)/);
+    const j = JSON.parse(run("verify", "--json", `${T}with-anchors.json`).stdout);
+    expect(j.receipts.unchecked).toEqual(["anchors"]);
+  });
+
+  it("exits 1 with a reading, not a stack trace, on hostile field types", () => {
+    const p = JSON.parse(readFileSync(`${V}record.json`, "utf8"));
+    p.entries[1].prev = null; p.entries[0].hash = 42;
+    writeFileSync(`${T}hostile.json`, JSON.stringify(p));
+    const r = run("verify", `${T}hostile.json`);
+    expect(r.status).toBe(1);
+    expect(r.stdout).toMatch(/^altered at entry 1/m);
+    expect(r.stderr).not.toMatch(/TypeError|at .*\.js:\d+/);
+  });
+
+  it("says when signatures were not checked, on the same line as the verdict", () => {
+    const p = JSON.parse(readFileSync(`${V}record.json`, "utf8"));
+    delete p.signers;
+    writeFileSync(`${T}stripped.json`, JSON.stringify(p));
+    const r = run("verify", `${T}stripped.json`);
+    expect(r.stdout).toMatch(/^holds \(signatures not checked\)/m);
+  });
+});

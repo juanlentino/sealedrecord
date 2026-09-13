@@ -38,6 +38,10 @@ describe("assembled site", () => {
       expect(html).toContain(must);
     }
     expect(html).toMatch(/aria-live/);
+    /* No unconditional signature claim in static markup; the runtime fills it in. */
+    expect(html).not.toMatch(/Every digest and signature is recomputed/);
+    expect(html).toMatch(/<noscript>/);
+    expect(html).toMatch(/nothing on this page has verified anything/i);
     expect(html).not.toMatch(/<link[^>]+(preconnect|prefetch|dns-prefetch)/);
     expect(html).not.toMatch(/<script[^>]+src="https?:/);
     for (const f of ["verifier.js", "render.js", "anchors.js"]) expect(read(f)).not.toMatch(/fetch\(|XMLHttpRequest|navigator\.sendBeacon|localStorage|sessionStorage|document\.cookie/);

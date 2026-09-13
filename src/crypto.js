@@ -25,6 +25,7 @@ export const signText = async (privateKey, s) =>
   HEX(await crypto.subtle.sign(ED, privateKey, ENC.encode(s)));
 
 export const verifyText = async (publicKey, signatureHex, s) => {
+  if (typeof signatureHex !== "string") return false; /* hostile input is a false, never a throw */
   const bytes = signatureHex.match(/.{2}/g);
   if (!bytes) return false;
   const sig = new Uint8Array(bytes.map((h) => parseInt(h, 16)));

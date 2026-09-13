@@ -44,14 +44,22 @@ const main = async (argv) => {
     return EXIT[reading.kind];
   }
   const head = reading.kind === "altered" ? `altered at entry ${reading.breakSeq}` : reading.kind;
-  console.log(head);
+  console.log(ok && !reading.signed ? `${head} (signatures not checked)` : head);
   if (reading.detail) console.log(`  ${reading.detail}`);
   if (ok) {
-    console.log(`  ${reading.entries.length} of ${reading.total} entries read; signatures ${reading.signed ? "verified" : "not checked"}`);
-    console.log(`  ${receipts.verified} of ${receipts.receipted} receipts verify${receipts.problems.length ? `; ${receipts.problems.join("; ")}` : ""}`);
+    console.log(`  ${reading.entries.length} of ${reading.total} entries read; signatures ${reading.signed ? "verified" : "not checked: no signer keys in the record, or no Ed25519 in this runtime; a hash chain alone says nothing about who signed"}`);
+    console.log(`  ${receipts.verified} of ${receipts.receipted} receipts verify against the attestation key the record carries (the key holder's word on time, not a timestamp proof)${receipts.problems.length ? `; ${receipts.problems.join("; ")}` : ""}`);
+    if (receipts.unchecked.length) console.log(`  attestations also carry: ${receipts.unchecked.join(", ")} (not verified by this reader)`);
   }
   for (const c of checks) console.log(`${basename(c.file)}: ${c.match}${c.seq.length ? ` (entry ${c.seq.join(", ")})` : ""}`);
   return EXIT[reading.kind];
 };
 
-process.exit(await main(process.argv.slice(2)));
+/* Nothing above should throw; if something does, it is a bug in the reader
+   and still gets a defined exit, never a stack trace on a user's screen. */
+try {
+  process.exit(await main(process.argv.slice(2)));
+} catch (e) {
+  console.error(`reader error: ${e.message}`);
+  process.exit(3);
+}

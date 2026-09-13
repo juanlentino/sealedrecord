@@ -11,8 +11,9 @@
 <header>
   <p class="kicker">sealedrecord</p>
   <h1>Verify a sealed record</h1>
-  <p class="lede">Every digest and signature is recomputed here, in this page, with the same library its consumers install. Nothing you drop here is sent anywhere. This page has loaded everything it needs; verifying makes no network request. Reloading does.</p>
-  <p class="meta">Library <code id="lib-version">…</code> · Runtime Ed25519: <span id="ed-support">checking</span></p>
+  <p class="lede"><span id="claim">Recomputed here, in this page, with the same library its consumers install; what this browser can recompute is stated once scripts have run.</span> Nothing you drop here is sent anywhere. This page has loaded everything it needs; verifying makes no network request. Reloading does.</p>
+  <noscript><p class="caveat">Scripts are off, so nothing on this page has verified anything. The command line does the same work: npx sealedrecord verify record.json</p></noscript>
+  <p class="meta">Library <code id="lib-version">not loaded</code> · Runtime Ed25519: <span id="ed-support">unknown until scripts run</span></p>
 </header>
 
 <main class="cols">
@@ -38,7 +39,7 @@
   <section aria-labelledby="out-h" class="col-out">
     <h2 id="out-h">Reading</h2>
     <div id="verdict" class="verdict" aria-live="polite" aria-atomic="true">
-      <p class="quiet">No record loaded.</p>
+      <p class="quiet">Scripts have not run: nothing on this page has verified anything.</p>
     </div>
     <div id="break" class="break" hidden></div>
     <p id="receipts" class="receipts"></p>
