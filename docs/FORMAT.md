@@ -121,7 +121,7 @@ Return `{ kind: "malformed", detail }` when: the value is not an object; `format
 Walk `entries` in order with `prev = GENESIS`. Stop at the first entry that fails any check, in this order, and report `{ kind: "altered", breakSeq, detail }` where `breakSeq` is the one-based position:
 
 1. Each of `seq`, `m`, `room`, `action`, `actor`, `prev`, `hash` is present (not undefined).
-2. `actor` is a non-null object, `prev` and `hash` are strings (a digest is a string), `m` is a JSON number, and `artifact`, when present, is a non-null object. Any other type fails here, before any arithmetic or coercion could make it pass.
+2. `actor` is a non-null object (an array is not one), `prev` and `hash` are strings (a digest is a string), `m` is a JSON number, and `artifact`, when present, is a non-null object (again, not an array). Any other type fails here, before any arithmetic or coercion could make it pass.
 3. `seq == index + 1`.
 4. `prev == running prev`.
 5. `derivedFrom`, if present, is an integer in `[1, index]`.

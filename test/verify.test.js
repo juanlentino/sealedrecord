@@ -375,3 +375,13 @@ describe("artifact, when present, is an object", () => {
     expect((await verifyPackage(pkg)).detail).toMatch(/artifact that is not an object/);
   });
 });
+
+describe("actor must be a non-array object", () => {
+  it("an array actor is altered at step 2 with the type detail, not at the digest", async () => {
+    const pkg = JSON.parse((await import("node:fs")).readFileSync(new URL("../vectors/record.json", import.meta.url), "utf8"));
+    pkg.entries[0].actor = [];
+    const r = await verifyPackage(pkg);
+    expect(r).toMatchObject({ kind: "altered", breakSeq: 1 });
+    expect(r.detail).toMatch(/carries no actor/);
+  });
+});

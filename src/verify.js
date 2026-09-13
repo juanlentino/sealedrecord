@@ -61,7 +61,7 @@ export const verifyPackage = async (pkg) => {
       breakAt = { seq: i + 1, detail: `entry ${i + 1} is missing its ${missing} field` };
       break;
     }
-    if (e.actor === null || typeof e.actor !== "object") {
+    if (e.actor === null || typeof e.actor !== "object" || Array.isArray(e.actor)) {
       breakAt = { seq: i + 1, detail: `entry ${i + 1} carries no actor; every entry names who acted` };
       break;
     }
