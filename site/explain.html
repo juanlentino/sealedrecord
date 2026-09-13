@@ -30,7 +30,7 @@
   <p>It says nothing about whether what people signed is true, only that they signed it and that it has not changed. It says nothing about who the key holders are; a key is a key, and binding it to a person is outside the format. Time receipts, when present, verify against the attestation key the record carries, which is the key holder's word on when entries arrived, not a timestamp proof. Timestamp proofs may ride along in the record; this verifier carries them and does not check them.</p>
 
   <h2>Why this page can be trusted</h2>
-  <p>Nothing you drop here leaves your browser; after loading, the page makes no network request. It runs the published npm package of the version shown on the front page, unpacked as is, and serves a build stamp naming that version and the commit it was built from. The same package verifies from a shell with <code>npx sealedrecord verify record.json</code>, and a second reader written from the specification alone, in another language, is tested against the same records. If two readers disagree, one of them is wrong and the specification decides which.</p>
+  <p>Nothing you drop here leaves your browser; after loading, the page makes no network request. It runs the published npm package of the version shown on the front page, unpacked as is, and serves a build stamp naming that version and the commit it was built from. The same package verifies from a shell with <code>npx sealedrecord verify record.json</code>, and a second reader in another language, written from the specification by the same author without reading this code, is tested against the same records. If two readers disagree, one of them is wrong and the specification decides which. No reader by anyone else exists yet.</p>
 </main>
 
 <footer>
