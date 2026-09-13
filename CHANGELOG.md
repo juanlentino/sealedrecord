@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Changed
+- Page: header and footer span the content width instead of a narrower column; the footer's exit-code sentence matches exit 4.
+
 ## [0.6.0] - 2026-09-13
 
 ### Added

@@ -16,10 +16,10 @@ html { background: var(--paper); color: var(--ink); font: 16px/1.55 var(--sans);
 body { max-width: 1120px; margin: 0 auto; padding: var(--s5) var(--s3) var(--s5); }
 code, .mono, #ledger, textarea { font-family: var(--mono); }
 
-header { max-width: 64ch; margin-bottom: var(--s5); }
+header { margin-bottom: var(--s5); }
 .kicker { font-family: var(--mono); font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 var(--s1); }
 h1 { font-size: clamp(1.75rem, 3vw, 2.25rem); line-height: 1.15; letter-spacing: -.01em; margin: 0 0 var(--s2); }
-.lede { font-size: 1.05rem; color: var(--ink); margin: 0 0 var(--s2); }
+.lede { font-size: 1.05rem; color: var(--ink); margin: 0 0 var(--s2); max-width: 90ch; }
 .meta { font-size: .85rem; color: var(--ink-2); margin: 0; }
 .meta code { font-size: .85rem; }
 
@@ -80,5 +80,5 @@ summary { cursor: pointer; color: var(--ink-2); font-size: .9rem; }
 .file-result.audio::before { content: "SAME AUDIO"; color: var(--warn); }
 .file-result.none::before { content: "NO MATCH"; color: var(--bad); }
 
-footer { margin-top: var(--s5); border-top: 1px solid var(--rule); padding-top: var(--s3); color: var(--ink-2); font-size: .85rem; max-width: 80ch; }
+footer { margin-top: var(--s5); border-top: 1px solid var(--rule); padding-top: var(--s3); color: var(--ink-2); font-size: .85rem; }
 footer p { margin: .35rem 0; }
