@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- Issues: a `1.0` milestone with the freeze gate as its issue, one `unclaimed` issue per idea in NOTES.md, labels (`spec-gap`, `unclaimed`, `not-planned`, `freeze`), and two issue templates (specification gap, misjudged record) with the security form and the unclaimed list as contact links. Nothing was backfilled for past work; the CHANGELOG and releases carry that.
+
 ### Changed
 - README and CONTRIBUTING name the differential fuzz, the lint, the Go tests as a development step, and the explainer page; the status line calls 0.8 the freeze candidate.
 

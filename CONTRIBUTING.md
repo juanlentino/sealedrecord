@@ -1,6 +1,6 @@
 # Contributing
 
-The repository is open to contributions and to forks. NOTES.md lists ideas nobody has claimed; COMPARISON.md and docs/FORMAT.md welcome corrections; a second implementation of the format, in any language, can test itself against `vectors/` and is welcome to report where the specification was unclear.
+The repository is open to contributions and to forks. NOTES.md lists ideas nobody has claimed, each also an issue labelled `unclaimed`; comment on one to claim it. A place where the specification could be read two ways is a `spec-gap` issue; a verdict that seems wrong is a "misjudged record" issue, unless the reader accepted something it should not have, which goes to the private security form. COMPARISON.md and docs/FORMAT.md welcome corrections; a second implementation of the format, in any language, can test itself against `vectors/` and is welcome to report where the specification was unclear.
 
 ## What a contribution needs
 

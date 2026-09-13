@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security report
+    url: https://github.com/juanlentino/sealedrecord/security/advisories/new
+    about: A verdict that should not have been given. Private; see SECURITY.md.
+  - name: Unclaimed ideas
+    url: https://github.com/juanlentino/sealedrecord/issues?q=is%3Aissue+is%3Aopen+label%3Aunclaimed
+    about: Ideas from NOTES.md nobody has picked up. Comment on one to claim it.
