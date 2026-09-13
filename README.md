@@ -142,7 +142,7 @@ WebCrypto wrappers used throughout, exported so callers hash and sign the same w
 
 Version 0.x. The format tag is `sealedrecord/package.v3`; the digest rules have been stable across the tag's history, and the current constants are the ones intended to freeze. 1.0 will mean the format is frozen: any later change to a committed field, the preimage, or the check order gets a new tag, and this reader keeps reading v3.
 
-Apache-2.0. See [CHANGELOG.md](CHANGELOG.md) for what changed and when, and [docs/ROADMAP.md](docs/ROADMAP.md) for what the command line grows into and what it will not become.
+Apache-2.0. See [CHANGELOG.md](CHANGELOG.md) for what changed and when, and [docs/ROADMAP.md](docs/ROADMAP.md) for where the command line is going.
 
 ## Development
 
