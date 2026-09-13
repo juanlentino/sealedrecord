@@ -1,13 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { execFileSync, spawnSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { readFileSync, writeFileSync, mkdtempSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 /* The CLI is the library with exit codes. Every case runs the real binary
    against the real vectors. */
 const BIN = fileURLToPath(new URL("../bin/sealedrecord.js", import.meta.url));
 const V = fileURLToPath(new URL("../vectors/", import.meta.url));
-const T = fileURLToPath(new URL("../dist-site/", import.meta.url)); /* gitignored scratch */
+const T = mkdtempSync(join(tmpdir(), "sealedrecord-cli-")) + "/";
 const run = (...args) => spawnSync("node", [BIN, ...args], { encoding: "utf8" });
 
 const tampered = () => {
