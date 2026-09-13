@@ -32,7 +32,7 @@ A C2PA validator needs a trust list, X.509 chain validation, CBOR and COSE parsi
 
 ## Where they agree
 
-Each commits to bytes with SHA-256 and signs with standard primitives. Each keeps the act of signing apart from the claim of identity: CAWG places the named actor's signature beside the claim signer's, and a sealed record places the actor's signature on the entry and leaves the binding of key to person outside the format. A valid manifest proves a signature was made, and a holding record proves integrity and order; neither proves that what was signed is true. The limits of hard bindings are stated plainly in both specifications.
+Both commit to bytes with SHA-256 and sign with standard algorithms. The act of signing is kept apart from the claim of identity on each side: CAWG places the named actor's signature beside the claim signer's, and a sealed record places the actor's signature on the entry and leaves the binding of key to person outside the format. A valid manifest proves a signature was made, and a holding record proves integrity and order; neither proves that what was signed is true. The limits of hard bindings are stated plainly in both specifications.
 
 ## How they compose
 
