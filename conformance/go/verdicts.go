@@ -33,15 +33,15 @@ func same(a, b any) bool {
 func verdicts(entries []map[string]any, tracks []any) []Verdict {
 	out := make([]Verdict, 0, len(tracks))
 	for _, tv := range tracks {
-		t, _ := tv.(map[string]any)
-		var id any
-		if t != nil {
-			id = t["id"]
-		}
+		t, isObj := tv.(map[string]any)
 		var own []map[string]any
-		for _, e := range entries {
-			if same(e["lane"], id) {
-				own = append(own, e)
+		if isObj && t != nil {
+			// A track that is not an object has no id and matches no entry.
+			id, hasId := t["id"]
+			for _, e := range entries {
+				if hasId && same(e["lane"], id) {
+					own = append(own, e)
+				}
 			}
 		}
 		v := Verdict{Track: tv, Key: "intact"}

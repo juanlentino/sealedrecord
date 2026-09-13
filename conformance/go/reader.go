@@ -119,6 +119,11 @@ func checkEntry(e map[string]any, i int, prev string, checkSigs bool, keys map[s
 	if _, ok := number(e["m"]); !ok {
 		return seq, "m is not a number"
 	}
+	if av, present := e["artifact"]; present {
+		if a, ok := av.(map[string]any); !ok || a == nil {
+			return seq, "artifact is not an object"
+		}
+	}
 	if s, ok := number(e["seq"]); !ok || s != float64(seq) {
 		return seq, "sequence number out of order"
 	}

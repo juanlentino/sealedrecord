@@ -20,6 +20,7 @@
   },
   "scripts": {
     "test": "vitest run",
+    "lint": "oxlint index.js src bin site/*.js scripts test",
     "vectors": "node scripts/build-vectors.mjs"
   },
   "repository": {
@@ -36,6 +37,7 @@
     "audio"
   ],
   "devDependencies": {
+    "oxlint": "^1.82.0",
     "vitest": "^4.1.11"
   },
   "bin": {

@@ -25,8 +25,10 @@ func actorOf(e map[string]any) map[string]any {
 	return map[string]any{"id": nil, "name": "unresolved"}
 }
 
+// optional is the primed component of 4.1: the value when present and not
+// null, else the empty string.
 func optional(e map[string]any, k string) string {
-	if v, ok := e[k]; ok {
+	if v, ok := e[k]; ok && v != nil {
 		return stringify(v, true)
 	}
 	return ""

@@ -174,7 +174,7 @@ describe("verifyPackage", () => {
 
   it("survives hostile signer ids without prototype pollution", async () => {
     const pkg = await sealedFixture();
-    pkg.signers = { ...(pkg.signers ?? {}), ["__proto__"]: { kty: "OKP", crv: "Ed25519", x: "AAAA" } };
+    pkg.signers = { ...pkg.signers, ["__proto__"]: { kty: "OKP", crv: "Ed25519", x: "AAAA" } };
     const r = await verifyPackage(pkg); /* must not throw, must not pollute */
     expect(["holds", "altered"]).toContain(r.kind);
     expect(Object.prototype.x).toBeUndefined();
@@ -364,5 +364,14 @@ describe("second-reader gaps, closed", () => {
   it("a JWK with extra members still imports; only kty, crv, x matter", async () => {
     const { pkg, jwk } = await good(); pkg.signers["ctr:a"] = { ...jwk, key_ops: ["sign"], use: "enc", alg: "whatever", ext: false };
     expect(await verifyPackage(pkg)).toMatchObject({ kind: "holds", signed: true });
+  });
+});
+
+describe("artifact, when present, is an object", () => {
+  it("a string artifact is altered at that entry, not silently committed as undefined fields", async () => {
+    const pkg = JSON.parse((await import("node:fs")).readFileSync(new URL("../vectors/record.json", import.meta.url), "utf8"));
+    pkg.entries[3].artifact = "x";
+    expect(await verifyPackage(pkg)).toMatchObject({ kind: "altered", breakSeq: 4 });
+    expect((await verifyPackage(pkg)).detail).toMatch(/artifact that is not an object/);
   });
 });

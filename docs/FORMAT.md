@@ -63,10 +63,12 @@ prev | i | action | lane | actor.id | actor.name | m | room | note' | artifact' 
 
 Stringification follows JavaScript template conversion: `null` as the text `null`, `undefined` as the text `undefined`, booleans as `true`/`false`, and numbers as JavaScript prints them. Conforming producers emit `m`, `derivedFrom`, and `artifact.size` as integers, which every language prints the same way: decimal digits, no fraction, no exponent. A reader in another language need only render integral numbers that way; non-integral numbers in those fields are a producer defect. The primed components use these substitutions:
 
-- `note'`: `note` if present, else empty string.
-- `derivedFrom'`: `derivedFrom` if present, else empty string.
-- `alg'`: `alg` if present, else empty string.
-- `artifact'`: empty string when the entry has no artifact; otherwise `sha256:name:size:pcm'` where `pcm'` is `pcm_sha256` if present else empty. Note the `:` separator inside this component.
+- `note'`: `note` if present and not null, else empty string.
+- `derivedFrom'`: `derivedFrom` if present and not null, else empty string.
+- `alg'`: `alg` if present and not null, else empty string.
+- `artifact'`: empty string when the entry has no `artifact` member; otherwise (the member is an object, by step 2 of §5.2) `sha256:name:size:pcm'` where `pcm'` is `pcm_sha256` if present and not null, else empty. Note the `:` separator inside this component.
+
+"Present and not null" is one rule for all four primed components: a JSON `null` in any of them commits as the empty string, exactly as if the member were absent. Conforming producers omit the member instead of writing `null` (§8).
 - `actor`: when absent, treated as `{ id: null, name: "unresolved" }`.
 
 Because a pipe or colon inside a field value is not escaped, the format relies on the digest committing to the whole string, not on field boundaries being recoverable from it.
@@ -103,8 +105,10 @@ When the record carries no `signers`, or the runtime cannot do Ed25519, signatur
 
 ### 4.5 Derivation and scheme fields
 
-- `derivedFrom`, when present, must be an integer `1 <= derivedFrom < seq`. It names an earlier entry by `seq`.
-- `alg`, when present, must be `"Ed25519"`. Any other value is `altered` at that entry, since this reader cannot verify it.
+- `derivedFrom`, when the member is present (a `null` counts as present here), must be an integer `1 <= derivedFrom < seq`. It names an earlier entry by `seq`.
+- `alg`, when the member is present (`null` included), must be `"Ed25519"`. Any other value is `altered` at that entry, since this reader cannot verify it.
+
+So a `null` in `derivedFrom` or `alg` fails these checks even though §4.1 would have committed it as empty; the checks run before the digest is recomputed.
 
 ## 5. Reading a record
 
@@ -117,7 +121,7 @@ Return `{ kind: "malformed", detail }` when: the value is not an object; `format
 Walk `entries` in order with `prev = GENESIS`. Stop at the first entry that fails any check, in this order, and report `{ kind: "altered", breakSeq, detail }` where `breakSeq` is the one-based position:
 
 1. Each of `seq`, `m`, `room`, `action`, `actor`, `prev`, `hash` is present (not undefined).
-2. `actor` is a non-null object, `prev` and `hash` are strings (a digest is a string), and `m` is a JSON number. Any other type fails here, before any arithmetic or coercion could make it pass.
+2. `actor` is a non-null object, `prev` and `hash` are strings (a digest is a string), `m` is a JSON number, and `artifact`, when present, is a non-null object. Any other type fails here, before any arithmetic or coercion could make it pass.
 3. `seq == index + 1`.
 4. `prev == running prev`.
 5. `derivedFrom`, if present, is an integer in `[1, index]`.
@@ -138,7 +142,7 @@ The result carries `session`, `sealedAt`, `entries` (accepted, with `sealed` add
 
 ### 5.4 Track verdicts
 
-For each `tracks[i]`, take the accepted entries whose `lane` equals `tracks[i].id` (strict equality; the producer uses the lane string itself as the id). Then:
+For each `tracks[i]`, take the accepted entries whose `lane` equals `tracks[i].id` (strict equality; the producer uses the lane string itself as the id). A track that is not an object, or has no `id` member, matches no entry; a track whose `id` is `null` matches the entries whose `lane` is `null`. Then:
 
 - no entries: `pending`
 - first entry not sealed: `unverified` (origin unverified)

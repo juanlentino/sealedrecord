@@ -77,6 +77,11 @@ export const verifyPackage = async (pkg) => {
       breakAt = { seq: i + 1, detail: `entry ${i + 1} carries an m that is not a number` };
       break;
     }
+    /* An artifact, when present, is an object; anything else is not a record's artifact. */
+    if (e.artifact !== undefined && (e.artifact === null || typeof e.artifact !== "object" || Array.isArray(e.artifact))) {
+      breakAt = { seq: i + 1, detail: `entry ${i + 1} carries an artifact that is not an object` };
+      break;
+    }
     if (e.seq !== i + 1) {
       breakAt = { seq: i + 1, detail: `entry ${i + 1} carries sequence number ${e.seq}; entries have been reordered or removed` };
       break;

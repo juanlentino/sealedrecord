@@ -15,10 +15,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-      - run: npm ci
-      - run: npm test
       - uses: actions/setup-go@v5
         with:
           go-version: "1.22"
+      - run: npm ci
+      - run: npm run lint
       - name: the second reader agrees with the vectors
         run: cd conformance/go && go test ./...
+      - run: npm test   # includes the differential fuzz against the Go reader
