@@ -11,6 +11,7 @@
   "files": [
     "index.js",
     "src/",
+    "bin/",
     "docs/FORMAT.md",
     "COMPARISON.md"
   ],
@@ -36,5 +37,8 @@
   ],
   "devDependencies": {
     "vitest": "^4.1.11"
+  },
+  "bin": {
+    "sealedrecord": "bin/sealedrecord.js"
   }
 }

@@ -8,6 +8,16 @@ Specification: [docs/FORMAT.md](docs/FORMAT.md). How this relates to C2PA: [COMP
 
 https://juanlentino.github.io/sealedrecord/ is this library served as static files: drop a record, get a reading. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads. The example buttons use the conformance vectors below.
 
+## Command line
+
+```sh
+npx sealedrecord verify record.json                 # reading and receipts
+npx sealedrecord verify record.json take.wav        # plus each file: exact, same audio, or no match
+npx sealedrecord verify --json record.json          # the reading object, for scripts
+```
+
+Exit code 0 when the record holds, 1 when it is altered or malformed, 2 when the chain recomputes but was never sealed, 3 on usage or I/O errors. No flags beyond `--json`.
+
 ## Install and verify
 
 ```sh

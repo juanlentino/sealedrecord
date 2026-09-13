@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+/* The library with exit codes.
+     sealedrecord verify [--json] <record.json> [file ...]
+   exit 0 holds · 1 altered or malformed · 2 unsealed · 3 usage or I/O */
+
+import { readFileSync } from "node:fs";
+import { basename } from "node:path";
+import { verifyPackage, verifyReceipts, pcmHash, findAnchors, findPcmAnchors } from "../index.js";
+
+const USAGE = "usage: sealedrecord verify [--json] <record.json> [file ...]";
+const EXIT = { holds: 0, altered: 1, malformed: 1, unsealed: 2 };
+const HEX = (b) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
+
+const readOr3 = (path) => {
+  try { return readFileSync(path); } catch (e) { console.error(`cannot read ${path}: ${e.message}`); process.exit(3); }
+};
+
+const checkFile = async (path, entries) => {
+  const bytes = readOr3(path);
+  const buf = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+  const sha256 = HEX(await crypto.subtle.digest("SHA-256", buf));
+  const exact = findAnchors(sha256, entries);
+  if (exact.length) return { file: path, match: "exact", seq: exact.map((e) => e.seq) };
+  const audio = findPcmAnchors(await pcmHash(buf), entries);
+  if (audio.length) return { file: path, match: "same audio", seq: audio.map((e) => e.seq) };
+  return { file: path, match: "no match", seq: [] };
+};
+
+const main = async (argv) => {
+  const json = argv.includes("--json");
+  const args = argv.filter((a) => a !== "--json");
+  if (args[0] !== "verify" || !args[1]) { console.error(USAGE); return 3; }
+  const [, recordPath, ...files] = args;
+
+  let pkg;
+  try { pkg = JSON.parse(readOr3(recordPath).toString("utf8")); } catch { pkg = null; }
+  const reading = await verifyPackage(pkg);
+  const ok = reading.kind !== "malformed";
+  const receipts = ok ? await verifyReceipts({ ...pkg, entries: reading.entries }) : null;
+  const checks = ok ? await Promise.all(files.map((f) => checkFile(f, reading.entries))) : [];
+
+  if (json) {
+    console.log(JSON.stringify({ reading, receipts, files: checks }, null, 2));
+    return EXIT[reading.kind];
+  }
+  const head = reading.kind === "altered" ? `altered at entry ${reading.breakSeq}` : reading.kind;
+  console.log(head);
+  if (reading.detail) console.log(`  ${reading.detail}`);
+  if (ok) {
+    console.log(`  ${reading.entries.length} of ${reading.total} entries read; signatures ${reading.signed ? "verified" : "not checked"}`);
+    console.log(`  ${receipts.verified} of ${receipts.receipted} receipts verify${receipts.problems.length ? `; ${receipts.problems.join("; ")}` : ""}`);
+  }
+  for (const c of checks) console.log(`${basename(c.file)}: ${c.match}${c.seq.length ? ` (entry ${c.seq.join(", ")})` : ""}`);
+  return EXIT[reading.kind];
+};
+
+process.exit(await main(process.argv.slice(2)));

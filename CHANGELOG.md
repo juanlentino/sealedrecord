@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- **Command line**: `sealedrecord verify [--json] <record.json> [file ...]`, the library with exit codes (0 holds, 1 altered or malformed, 2 unsealed, 3 usage or I/O). Files after the record are checked as exact, same audio, or no match. Same `index.js`, no dependency; `test/cli.test.js` runs the binary against the vectors.
+
 ### Changed
 - `COMPARISON.md` names the CAWG identity assertion (1.2, checked against the spec): several named actors can sign parts of one manifest with their own credentials, which corrects the earlier "one signer" wording; what remains different is that identity still resolves to a credential outside the file, and nothing orders the actors in time.
 - `COMPARISON.md` states the C2PA specification version it was written against (2.4) and that it is written from inside the content-authenticity community, with corrections invited as issues.
