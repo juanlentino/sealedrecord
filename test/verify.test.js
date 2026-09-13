@@ -183,9 +183,9 @@ describe("verifyPackage", () => {
   it("rejects foreign formats and empty payloads", async () => {
     expect((await verifyPackage(null)).kind).toBe("malformed");
     expect((await verifyPackage({ format: "something/else" })).kind).toBe("malformed");
-    const foreign = await verifyPackage({ format: "provenance-session/package.v2", entries: [{}] });
-    expect(foreign.kind).toBe("malformed"); /* demo packages are not Selo packages */
-    const preAnchor = await verifyPackage({ format: "selo/package.v1", entries: [{}] });
+    const foreign = await verifyPackage({ format: "other-namespace/package.v3", entries: [{}] });
+    expect(foreign.kind).toBe("malformed"); /* another namespace is not this format, whatever its version */
+    const preAnchor = await verifyPackage({ format: "sealedrecord/package.v1", entries: [{}] });
     expect(preAnchor.kind).toBe("malformed"); /* v1 never shipped; no legacy to honor */
     expect((await verifyPackage({ format: PKG_FORMAT, entries: [] })).kind).toBe("malformed");
   });

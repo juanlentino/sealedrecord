@@ -9,7 +9,7 @@ describe("chain cryptography", () => {
   });
 
   it("is deterministic", async () => {
-    expect(await sha256Hex("selo")).toBe(await sha256Hex("selo"));
+    expect(await sha256Hex("record")).toBe(await sha256Hex("record"));
   });
 
   it("signs and verifies with Ed25519, and rejects altered text", async () => {

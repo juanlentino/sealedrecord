@@ -10,7 +10,7 @@ import { importPublicJwk, verifyText } from "./crypto.js";
 
 /* The signing side must byte-match this canonical form. */
 export const receiptCanonical = ({ sessionId, seq, hash, receivedAt }) =>
-  `selo-receipt.v1|${sessionId}|${seq}|${hash}|${receivedAt}`;
+  `sealedrecord/receipt.v1|${sessionId}|${seq}|${hash}|${receivedAt}`;
 
 export const verifyReceipts = async (pkg) => {
   const entries = pkg.entries ?? [];

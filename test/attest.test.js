@@ -49,3 +49,10 @@ describe("verifyReceipts", () => {
     expect(r).toMatchObject({ total: 2, receipted: 0, verified: 0 });
   });
 });
+
+describe("receipt canonical tag", () => {
+  it("is the neutral format identifier, first component, pipe-separated", () => {
+    const c = receiptCanonical({ sessionId: "ses_1", seq: 3, hash: "e".repeat(64), receivedAt: "2026-01-01T00:00:00Z" });
+    expect(c).toBe(`sealedrecord/receipt.v1|ses_1|3|${"e".repeat(64)}|2026-01-01T00:00:00Z`);
+  });
+});

@@ -7,7 +7,7 @@
 /* v3: artifact commits gain the PCM secondary anchor, and entries commit
    derivation links (derivedFrom) and the reserved signature-scheme field
    (alg). v1 and v2 never shipped; no legacy records to honor. */
-export const PKG_FORMAT = "selo/package.v3";
+export const PKG_FORMAT = "sealedrecord/package.v3";
 
 /* Free text for humans, never committed, never read by a verifier. */
 export const DEFAULT_NOTE = "Sealed record: SHA-256 chain digests, Ed25519 entry signatures. Attestations (time receipts, timestamp proofs) are metadata about the chain, never part of it.";

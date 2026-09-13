@@ -1,8 +1,8 @@
-# Sealed record format, version `selo/package.v3`
+# Sealed record format, version `sealedrecord/package.v3`
 
 This document specifies the record completely enough to implement an independent reader. Where it and the reference implementation disagree, the reference implementation is the bug report; the record bytes are the authority.
 
-The format identifier `selo/package.v3` and the receipt tag `selo-receipt.v1` are opaque protocol constants. Readers compare them byte for byte and attach no meaning to them.
+The format identifier `sealedrecord/package.v3` and the receipt tag `sealedrecord/receipt.v1` are opaque protocol constants. Readers compare them byte for byte and attach no meaning to them. The version suffix counts revisions of the digest rules (v3 is the third), and the namespace is simply where this specification lives; a namespace was renamed once before any record left the room, which is why the suffix did not restart at v1.
 
 ## 1. Encoding
 
@@ -12,7 +12,7 @@ A record is one UTF-8 JSON document. All digests and signatures are lowercase he
 
 | Field | Type | Committed | Notes |
 |---|---|---|---|
-| `format` | string | no | Must equal `selo/package.v3`. Anything else is `malformed`. |
+| `format` | string | no | Must equal `sealedrecord/package.v3`. Anything else is `malformed`. |
 | `note` | string | no | Free text for humans. Readers ignore it. |
 | `session` | object | partly | `id` (optional string), `code`, `title`. Only `id` participates in receipts (§7). |
 | `sealedAt` | string | no | The `t` of the sealing entry. Display only. |
@@ -110,7 +110,7 @@ When the record carries no `signers`, or the runtime cannot do Ed25519, signatur
 
 ### 5.1 Malformed
 
-Return `{ kind: "malformed", detail }` when: the value is not an object; `format` differs from `selo/package.v3`; `entries` is not a non-empty array; `entries.length > 10000`; `signers` has more than 200 keys.
+Return `{ kind: "malformed", detail }` when: the value is not an object; `format` differs from `sealedrecord/package.v3`; `entries` is not a non-empty array; `entries.length > 10000`; `signers` has more than 200 keys.
 
 ### 5.2 Walk
 
@@ -184,7 +184,7 @@ A receipt for entry `seq` is valid when
 
 ```
 Ed25519.verify( attestations.key, sig_bytes, UTF8(canonical) ) == true
-canonical = "selo-receipt.v1|" + session.id + "|" + seq + "|" + hash + "|" + received_at
+canonical = "sealedrecord/receipt.v1|" + session.id + "|" + seq + "|" + hash + "|" + received_at
 ```
 
 with `hash` taken from the entry (verify the chain first; receipts vouch for time, not content) and `session.id` stringified as in §4.1 (a missing id commits as `undefined`). Drop any JWK `alg` member before importing `attestations.key`.

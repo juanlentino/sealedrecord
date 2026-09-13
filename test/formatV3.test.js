@@ -45,7 +45,7 @@ const build = async () => {
 
 describe("format v3 commitments", () => {
   it("the format id is v3", () => {
-    expect(PKG_FORMAT).toBe("selo/package.v3");
+    expect(PKG_FORMAT).toBe("sealedrecord/package.v3");
   });
 
   it("a chain carrying pcm anchors and derivation links verifies end to end", async () => {

@@ -4,6 +4,11 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Changed
+- **Wire constants are vendor-neutral.** The format identifier is now `sealedrecord/package.v3` and the receipt tag `sealedrecord/receipt.v1`. The digest rules are unchanged, so the version suffix stays at v3; the format tag is an envelope field outside every digest and signature, while the receipt tag is inside the receipt-signed message, so receipts written under the old tag no longer verify. Hard rename, no legacy read path: no sealed record existed outside regenerable fixtures.
+- Vectors regenerated under the new constants.
+- Tests no longer name any product, demo, or third-party format in literals or comments.
+
 ## [0.1.2] - 2026-09-13
 
 ### Added
