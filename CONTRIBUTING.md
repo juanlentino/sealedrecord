@@ -4,7 +4,7 @@ The repository is open to contributions and to forks. NOTES.md lists ideas nobod
 
 ## What a contribution needs
 
-- Tests first. A change arrives with the test that fails without it. `npm test` must pass on Node 20 and 24, including the assembled site (`node scripts/site-assemble.mjs --local` runs inside the suite).
+- Tests first. A change arrives with the test that fails without it. `npm test` must pass on Node 20 and 24, including the assembled site and the differential fuzz against the Go reader (Go is needed locally for that test; it skips without it and CI has it). `npm run lint` clean. A change to reader behaviour changes both readers and `docs/FORMAT.md` together, and `cd conformance/go && go test ./...` must still pass.
 - A line in CHANGELOG.md under Unreleased. Releases are cut separately; do not bump the version or tag.
 - The rules of the package: zero runtime dependencies, WebCrypto only, no network at runtime, nothing persisted without the user asking, no model, no product or vendor names anywhere in the repository.
 - The prose register: plain declarative sentences, no em dashes, in code comments, docs, and page copy alike.

@@ -8,7 +8,7 @@ Specification: [docs/FORMAT.md](docs/FORMAT.md). How this relates to C2PA: [COMP
 
 ## Verify in a browser
 
-https://juanlentino.github.io/sealedrecord/ is this library served as static files: drop a record, get a reading. Whether the live page matches `main` and the registry is checked daily: ![live page freshness](https://github.com/juanlentino/sealedrecord/actions/workflows/freshness.yml/badge.svg). The page serves `build.json`, a static stamp naming the library version it was assembled from and the commit that last touched its inputs; the page itself never reads it. The command line below does the same from a shell. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads. The example buttons use the conformance vectors below.
+https://juanlentino.github.io/sealedrecord/ is this library served as static files: drop a record, get a reading. [explain.html](https://juanlentino.github.io/sealedrecord/explain.html) beside it says what is checked and what each verdict means, with no scripts at all. Whether the live page matches `main` and the registry is checked daily: ![live page freshness](https://github.com/juanlentino/sealedrecord/actions/workflows/freshness.yml/badge.svg). The page serves `build.json`, a static stamp naming the library version it was assembled from and the commit that last touched its inputs; the page itself never reads it. The command line below does the same from a shell. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads. The example buttons use the conformance vectors below.
 
 ## Command line
 
@@ -95,7 +95,7 @@ The papers argue for what the format commits to and why; the specification says 
 
 `vectors/record.json` is a signed record with three signers, nine entries, receipts on every entry, a derivation link, and anchored audio. `vectors/take.wav` matches entry 2 by file hash; `vectors/take-retagged.wav` has the same samples and an extra metadata chunk, so it matches entry 2 by sample anchor only. `test/vectors.test.js` runs against all three, including a tamper case that must fail at entry 4.
 
-A second reader, in Go and written from the document alone, lives in `conformance/go/` and runs against the same files in CI; every place it had to guess became a sentence in FORMAT.md. A third-party implementation can run against the same files. That is what makes the format independently implementable rather than defined by whatever this code happens to do. `npm run vectors` regenerates the set with fresh keys; the generator verifies its own output and refuses to write a record that does not hold.
+A second reader, in Go and written from the document alone, lives in `conformance/go/` and runs against the same files in CI; every place it had to guess became a sentence in FORMAT.md. CI also runs a differential fuzz: seeded mutations of the vector through both readers, failing on any disagreement in outcome or any exception (`FUZZ_N` raises the count; 10,000 pass). A third-party implementation can run against the same files. That is what makes the format independently implementable rather than defined by whatever this code happens to do. `npm run vectors` regenerates the set with fresh keys; the generator verifies its own output and refuses to write a record that does not hold.
 
 ## Runtime
 
@@ -140,7 +140,7 @@ WebCrypto wrappers used throughout, exported so callers hash and sign the same w
 
 ## Status and license
 
-Version 0.x. The format tag is `sealedrecord/package.v3`; the digest rules have been stable across the tag's history, and the current constants are the ones intended to freeze. 1.0 will mean the format is frozen: any later change to a committed field, the preimage, or the check order gets a new tag, and this reader keeps reading v3. The change policy, including what a fork that alters the rules must do with the tag, is docs/FORMAT.md section 11. Security reports: [SECURITY.md](SECURITY.md).
+Version 0.x, with 0.8 as the freeze candidate: the specification has been implemented twice from the document, fuzzed differentially, and reviewed; what remains before 1.0 is outside comment. The format tag is `sealedrecord/package.v3`; the digest rules have been stable across the tag's history, and the current constants are the ones intended to freeze. 1.0 will mean the format is frozen: any later change to a committed field, the preimage, or the check order gets a new tag, and this reader keeps reading v3. The change policy, including what a fork that alters the rules must do with the tag, is docs/FORMAT.md section 11. Security reports: [SECURITY.md](SECURITY.md).
 
 Apache-2.0. See [CHANGELOG.md](CHANGELOG.md) for what changed and when, and [NOTES.md](NOTES.md) for ideas about the command line that are not promises.
 
@@ -152,7 +152,9 @@ The repository is open. [NOTES.md](NOTES.md) lists ideas nobody has claimed; any
 
 ```sh
 npm ci
-npm test                                  # library, CLI, page logic, assembled site
+npm test                                  # library, CLI, page logic, assembled site, differential fuzz (needs go)
+npm run lint                              # oxlint
+cd conformance/go && go test ./...        # the second reader against the vectors
 node scripts/site-assemble.mjs --local    # build the web verifier into dist-site/ from the working tree
 npm run vectors                           # regenerate the conformance vectors with fresh keys
 ```
