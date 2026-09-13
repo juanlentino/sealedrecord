@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- `CONTRIBUTING.md`, and a contributing section in the README: the repository is open to pull requests and forks; NOTES.md is an unclaimed list, not a backlog; what a change needs and which changes need a conversation first.
+
 ### Changed
 - `NOTES.md` moved to the repository root, beside `CHANGELOG.md` and `COMPARISON.md`, away from `docs/FORMAT.md`, which is normative and ships in the tarball. The notes do not ship and should not: a wishlist next to the specification invites the conflation the rename exists to prevent. Heading is now "Notes on the command line", so the framing no longer depends on a disclaimer.
 

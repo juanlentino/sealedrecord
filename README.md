@@ -144,6 +144,10 @@ Version 0.x. The format tag is `sealedrecord/package.v3`; the digest rules have 
 
 Apache-2.0. See [CHANGELOG.md](CHANGELOG.md) for what changed and when, and [NOTES.md](NOTES.md) for ideas about the command line that are not promises.
 
+## Contributing and forking
+
+The repository is open. [NOTES.md](NOTES.md) lists ideas nobody has claimed; anyone may build one and open a pull request, or fork and take the library where they need it. [CONTRIBUTING.md](CONTRIBUTING.md) says what a change needs (tests first, a CHANGELOG line, the package's rules) and which changes need a conversation before code, which is anything that would alter a reader's outcome.
+
 ## Development
 
 ```sh
