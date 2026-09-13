@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Changed
+- Page-only changes redeploy the verifier from `main` without a library release (`pages.yml`). The page still runs the published tarball at `package.json`'s version; the deploy refuses if that version is not on the registry. 0.5.3 was a library release with no library change, which this removes the need for.
+
 ## [0.5.3] - 2026-09-13
 
 ### Changed

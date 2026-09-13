@@ -153,6 +153,8 @@ npm run vectors                           # regenerate the conformance vectors w
 
 `site/sealedrecord` is a symlink to the checkout so the page's imports resolve during development; the assembler replaces it with the unpacked npm tarball, which is what Pages serves.
 
+Page-only changes (`site/`, the assembler, the vectors) redeploy the verifier on push to `main` without a release; the page still runs the published tarball at `package.json`'s version and the deploy fails if that version is not on the registry.
+
 A release is a version bump, a CHANGELOG entry, and a `vX.Y.Z` tag. The release workflow then publishes to npm through trusted publishing (no token), rebuilds the web verifier from the published tarball once the registry serves it, and creates the GitHub Release with each deliverable attached as its own file: the tarball, the verifier as an offline zip, the vectors, `FORMAT.md`, and `COMPARISON.md`. Notes are the CHANGELOG section for that version. Nothing is published by hand.
 
 To develop against a consuming project without editing its manifest, `npm link` here and `npm link sealedrecord` there.

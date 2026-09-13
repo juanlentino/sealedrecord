@@ -1,0 +1,41 @@
+# Page-only changes redeploy the verifier without a library release. The
+# page still runs the PUBLISHED tarball at package.json's version; if that
+# version is not on the registry the job fails rather than serve the checkout.
+name: pages
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", "scripts/site-assemble.mjs", "vectors/**"]
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: the version in package.json must already be published
+        run: |
+          v=$(node -p "require('./package.json').version")
+          npm view "sealedrecord@$v" version >/dev/null 2>&1 || { echo "sealedrecord@$v is not on the registry; tag and publish first"; exit 1; }
+      - run: node scripts/site-assemble.mjs
+      - name: the published tarball must match the checkout
+        run: |
+          diff dist-site/sealedrecord/index.js index.js
+          diff -r dist-site/sealedrecord/src src
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-site
+      - id: deploy
+        uses: actions/deploy-pages@v4
