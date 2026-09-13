@@ -281,3 +281,19 @@ describe("hostile field types produce readings, not exceptions", () => {
     expect(r.verdicts.length).toBe(3);
   });
 });
+
+/* Producer contract (D): a record never claims an identity it cannot back.
+   Hash-only is explicit (signerFor null); a signerFor that has no key for an
+   enrolled actor is a mistake, not a gap, and the producer refuses. */
+describe("buildEvents refuses a claimed identity with no key", () => {
+  const raw = [{ m: 0, action: "session opened", lane: null, room: "r", actor: { id: "ctr:a", name: "A" } }];
+  it("throws when signerFor is supplied but returns no key for an enrolled actor", async () => {
+    await expect(buildEvents(raw, () => null)).rejects.toThrow(/ctr:a/);
+  });
+  it("still builds hash-only records when signerFor is null, and gaps for actors without an id", async () => {
+    const events = await buildEvents(raw, null);
+    expect(events[0].sig).toBeUndefined();
+    const gap = await buildEvents([{ ...raw[0], actor: { id: null, name: "G" } }], () => null);
+    expect(gap[0].sealed).toBe(false);
+  });
+});

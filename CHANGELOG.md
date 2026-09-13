@@ -5,6 +5,8 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 ## [Unreleased]
 
 ### Added
+- **CLI exit code 4**: the chain holds but no signature was checked (no `signers` in the record, or no Ed25519 in the runtime). Exit 0 now means holds with every signature checked, so a pipeline keyed on 0 cannot accept a record whose `signers` were stripped. Readings and `--json` are unchanged; the reader's outcomes are unchanged (FORMAT.md §4.4 still reads `holds`, `signed: false`).
+- **`buildEvents` refuses a claimed identity with no key.** A `signerFor` that returns nothing for an enrolled actor throws; hash-only records pass `signerFor` as `null`, as before. A reference producer never emits a record that looks like a stripped one. FORMAT.md §8 states the producer contract and why readers cannot tell the two apart.
 - `verifyReceipts` returns `unchecked`: the names of every `attestations` member other than `key` and `receipts`, carried unparsed and unverified (timestamp proofs, for instance). `--json` gains `receipts.unchecked`; nothing existing is renamed or removed.
 - Hostile field types produce readings, never exceptions: `prev` and `hash` must be strings (FORMAT.md §5.2 step 2, §9), a non-string signature or receipt signature fails verification instead of throwing, receipts that are not objects are ignored, a null track yields `pending`. The CLI catches anything left and exits 3 with a one-line message. Tests cover null prev, numeric hash, non-numeric m, non-object entry, non-string format, numeric signature, null track.
 - Page: a forced `hasEd25519() === false` test path; a no-script fallback in static markup.

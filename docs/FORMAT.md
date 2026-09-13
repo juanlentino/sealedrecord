@@ -195,7 +195,7 @@ What a receipt proves: the holder of `attestations.key` saw this hash at this ti
 
 ## 8. Producing a record
 
-A conforming producer sorts raw events by `m` ascending, assigns `seq` from 1, derives `t`, computes each digest per §4.1, signs each enrolled entry's digest with that actor's private key, and serialises exactly the fields listed in §2 and §3, omitting optional fields that are absent rather than emitting `null`. The last entry of a finished record has `action` equal to `package sealed`.
+A conforming producer sorts raw events by `m` ascending, assigns `seq` from 1, derives `t`, computes each digest per §4.1, signs each enrolled entry's digest with that actor's private key, and serialises exactly the fields listed in §2 and §3, omitting optional fields that are absent rather than emitting `null`. A producer that signs at all signs every enrolled entry and carries every signer's key; a record with `actor.id` set, no `sig`, and no `signers` is what a hash-only producer emits, and a reader cannot tell it from a signed record whose `signers` were removed (§4.4). Readers report `signed: false` for both; consumers must read that field rather than the outcome alone. The last entry of a finished record has `action` equal to `package sealed`.
 
 ## 9. Limits and refusals
 

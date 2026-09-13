@@ -50,7 +50,10 @@ export const buildEvents = async (rawEvents, signerFor = null) => {
     let sig;
     if (sealed && signerFor) {
       const key = signerFor(actor.id);
-      if (key) sig = await signText(key, hash);
+      /* A claimed identity with no key to back it is a producer mistake,
+         never a recorded gap. Hash-only records pass signerFor as null. */
+      if (!key) throw new Error(`no signing key for ${actor.id}; pass signerFor as null for a hash-only record`);
+      sig = await signText(key, hash);
     }
     out.push({ ...e, actor, seq: i + 1, t: hhmm(e.m ?? 0), sealed, prev, hash, ...(sig ? { sig } : {}) });
     prev = hash;

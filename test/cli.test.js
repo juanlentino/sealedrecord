@@ -95,5 +95,8 @@ describe("what the CLI says about receipts and about bad input", () => {
     writeFileSync(`${T}stripped.json`, JSON.stringify(p));
     const r = run("verify", `${T}stripped.json`);
     expect(r.stdout).toMatch(/^holds \(signatures not checked\)/m);
+    expect(r.status).toBe(4); /* a pipeline keyed on exit 0 must not accept a stripped record */
+    expect(JSON.parse(run("verify", "--json", `${T}stripped.json`).stdout).reading.signed).toBe(false);
+    expect(run("verify", "--json", `${T}stripped.json`).status).toBe(4);
   });
 });

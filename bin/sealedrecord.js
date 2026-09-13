@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* The library with exit codes.
      sealedrecord verify [--json] <record.json> [file ...]
-   exit 0 holds · 1 altered or malformed · 2 unsealed · 3 usage or I/O */
+   exit 0 holds with signatures checked · 1 altered or malformed · 2 unsealed
+        · 3 usage or I/O · 4 holds, but no signature was checked */
 
 import { readFileSync } from "node:fs";
 import { basename } from "node:path";
@@ -9,6 +10,7 @@ import { verifyPackage, verifyReceipts, pcmHash, findAnchors, findPcmAnchors } f
 
 const USAGE = "usage: sealedrecord verify [--json] <record.json> [file ...]";
 const EXIT = { holds: 0, altered: 1, malformed: 1, unsealed: 2 };
+const exitFor = (r) => (r.kind === "holds" && !r.signed ? 4 : EXIT[r.kind]);
 const HEX = (b) => [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, "0")).join("");
 
 const readOr3 = (path) => {
@@ -41,7 +43,7 @@ const main = async (argv) => {
 
   if (json) {
     console.log(JSON.stringify({ reading, receipts, files: checks }, null, 2));
-    return EXIT[reading.kind];
+    return exitFor(reading);
   }
   const head = reading.kind === "altered" ? `altered at entry ${reading.breakSeq}` : reading.kind;
   console.log(ok && !reading.signed ? `${head} (signatures not checked)` : head);
@@ -52,7 +54,7 @@ const main = async (argv) => {
     if (receipts.unchecked.length) console.log(`  attestations also carry: ${receipts.unchecked.join(", ")} (not verified by this reader)`);
   }
   for (const c of checks) console.log(`${basename(c.file)}: ${c.match}${c.seq.length ? ` (entry ${c.seq.join(", ")})` : ""}`);
-  return EXIT[reading.kind];
+  return exitFor(reading);
 };
 
 /* Nothing above should throw; if something does, it is a bug in the reader

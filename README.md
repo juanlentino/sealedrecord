@@ -18,9 +18,9 @@ npx sealedrecord verify record.json take.wav        # plus each file: exact, sam
 npx sealedrecord verify --json record.json          # the reading object, for scripts
 ```
 
-Exit code 0 when the record holds, 1 when it is altered or malformed, 2 when the chain recomputes but was never sealed, 3 on usage or I/O errors. No flags beyond `--json`.
+Exit code 0 when the record holds with every signature checked, 1 when it is altered or malformed, 2 when the chain recomputes but was never sealed, 3 on usage or I/O errors, 4 when the chain holds but no signature was checked. No flags beyond `--json`.
 
-Exit 0 means the chain holds; it does not by itself mean signatures were checked. A record with no `signers`, or a runtime without Ed25519, reads `holds (signatures not checked)` on the first line and `"signed": false` in `--json`. Receipts verify against the attestation key the record carries, which is the key holder's word on time; anything else under `attestations` (timestamp proofs, for instance) is listed as `unchecked` and not verified.
+Exit 4 exists so a pipeline keyed on exit 0 cannot accept a record whose `signers` were stripped, or a reading from a runtime without Ed25519. Such a record reads `holds (signatures not checked)` on the first line and `"signed": false` in `--json`. Receipts verify against the attestation key the record carries, which is the key holder's word on time; anything else under `attestations` (timestamp proofs, for instance) is listed as `unchecked` and not verified.
 
 ## Install and verify
 
@@ -128,7 +128,7 @@ Format constants and primitives, for anyone writing their own reader or producer
 
 Producing, included as a reference so a second producer can be checked against it:
 
-- `buildEvents(rawEvents, signerFor)`: order, sequence, digest, and sign a list of raw events.
+- `buildEvents(rawEvents, signerFor)`: order, sequence, digest, and sign a list of raw events. Pass `signerFor` as `null` for a hash-only record; a `signerFor` that returns no key for an enrolled actor throws, so a record never claims an identity it cannot back.
 - `sealEntry({ prev, seq, raw, privateKey })`: one entry onto an existing chain, identical to what `buildEvents` would produce.
 - `buildPackage(lanes, entries, meta, sealedAt, signers, attestations, note)`: the record object.
 - `packageText(...)`: the same, serialized with two-space indentation.
