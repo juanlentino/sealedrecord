@@ -4,6 +4,11 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-09-13
+
+### Fixed
+- `COMPARISON.md` is actually in the tarball. 0.4.1 claimed it and shipped without it: the `files` edit had not applied.
+
 ## [0.4.1] - 2026-09-13
 
 ### Added
