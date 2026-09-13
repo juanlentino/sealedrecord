@@ -4,6 +4,9 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+### Added
+- `COMPARISON.md`: how the record format relates to C2PA (one asset versus a chain, certificate identity versus carried keys, inside the file versus beside it, validator surface), where they agree, how they compose, and when each alone is enough. Linked from the README and shipped in the tarball beside the format spec.
+
 ## [0.4.0] - 2026-09-13
 
 ### Added

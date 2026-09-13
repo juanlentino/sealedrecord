@@ -73,7 +73,7 @@ The design the format implements was published before this library existed:
 - Provenance as Substrate. SSRN 6730343. https://papers.ssrn.com/abstract=6730343
 - Author ORCID: https://orcid.org/0009-0006-8151-5920
 
-The papers argue for what the format commits to and why; the specification says how. Where they differ, the specification governs this implementation.
+The papers argue for what the format commits to and why; the specification says how. Where they differ, the specification governs this implementation. [COMPARISON.md](COMPARISON.md) states how the format relates to C2PA: different objects, different trust, and how they compose.
 
 ## Conformance vectors
 
