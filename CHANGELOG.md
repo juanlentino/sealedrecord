@@ -4,6 +4,8 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-13
+
 ### Changed
 - **Surface trimmed**: `formatBytes` and `fileMatchesArtifact` are no longer exported; neither has a role in the format (one is display, the other a one-liner over `hashFile`). 26 names remain.
 - Reading and receipt `detail` strings use plain punctuation instead of em dashes. Wording otherwise unchanged; the fragments consumers match on (`altered after signing`, `does not connect`, `entry N: receipt does not verify`) are intact.
