@@ -209,3 +209,14 @@ A conforming producer sorts raw events by `m` ascending, assigns `seq` from 1, d
 ## 10. Test vectors
 
 `vectors/` in this repository holds a signed record that `holds`, a WAV that matches an entry by file hash, and a retagged copy of the same WAV that matches only by sample anchor. `npm run vectors` regenerates them with fresh keys; the digests change, the structure does not.
+
+## 11. Status and change policy
+
+The format tag is the contract. `sealedrecord/package.v3` names exactly the rules in this document; a reader that implements them reads every v3 record, and a record that follows them reads the same under every conforming reader.
+
+Any change that alters an outcome for an existing record gets a new tag. That covers the digest preimage (§4.1), the committed fields (§3), the check order (§5.2), the outcome rules (§5.3, §5.4), the anchor definitions (§6), and the receipt canonical form (§7). Wording, limits that only refuse more hostile input, and additions that leave every existing outcome unchanged do not.
+
+Version 1.0 of the reference implementation will mean this document is frozen at v3. After that, a change to the rules is a new tag, and the reference reader keeps reading v3 alongside it.
+
+Anyone may fork this format under the licence. A fork that changes any rule above must use its own namespace in the tag (`example.org/package.v1`, not `sealedrecord/package.v4`), so that no reader can mistake one format for the other and no record can claim conformance it does not have. A fork that keeps the rules and only ships a different reader keeps the tag; conformance is what the vectors test, not who wrote the code.
+

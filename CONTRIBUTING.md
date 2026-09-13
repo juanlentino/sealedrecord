@@ -16,6 +16,14 @@ Anything that changes a reader outcome: the digest preimage, the committed field
 
 The list under "Things this will not grow into" in NOTES.md is not a rule against forks. It says what this repository will not merge, and why, so nobody spends a weekend on it here.
 
+## Forks
+
+Fork freely; the licence allows it. Two things keep forks and this repository from confusing each other's users. A fork that changes any rule in docs/FORMAT.md must use its own namespace in the format tag, as FORMAT.md section 11 says, so records and readers never claim a conformance they do not have. And a fork is its own project: it does not present itself as this one, and the name `sealedrecord` is not licensed as a trademark (Apache-2.0, section 6).
+
+## Decisions
+
+One maintainer merges. A pull request that meets the requirements above and stays inside the rules is merged; one that does not is answered with the reason. A disagreement about direction is resolved by the maintainer here and by a fork elsewhere, and both outcomes are fine.
+
 ## Licence
 
 Apache-2.0. By contributing you agree that your contribution is licensed the same way.
