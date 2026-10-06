@@ -58,5 +58,6 @@ The design argument behind the record format, including why provenance is treate
 
 - Provenance Over Detection. SSRN 6402298. https://papers.ssrn.com/abstract=6402298
 - Provenance as Substrate. SSRN 6730343. https://papers.ssrn.com/abstract=6730343
+- Provenance Without Institutions. SSRN 7456638. https://papers.ssrn.com/abstract=7456638
 
 The C2PA Technical Specification (2.4 at the time of writing) and the companion Soft Binding API are at https://spec.c2pa.org/. Statements about them above describe the published design at a general level; the specification carries the normative text.

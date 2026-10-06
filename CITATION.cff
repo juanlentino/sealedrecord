@@ -23,3 +23,10 @@ references:
         given-names: Juan
     url: https://papers.ssrn.com/abstract=6730343
     notes: SSRN 6730343
+  - type: article
+    title: Provenance Without Institutions
+    authors:
+      - family-names: Lentino
+        given-names: Juan
+    url: https://papers.ssrn.com/abstract=7456638
+    notes: SSRN 7456638
