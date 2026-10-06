@@ -1,16 +1,57 @@
 # sealedrecord
 
-Recomputes the hash chain, signatures, and time receipts of a sealed session record and reports whether it holds, and if not, at which entry it breaks.
+A sealed record is a session log: entries from one or more people, chained in order, where each entry's digest commits to its own content and to the digest before it, and each enrolled entry carries an Ed25519 signature from its actor. The signers' public keys travel in the record, and the record lives outside the audio, naming files by hash. It exists so that anyone holding the record can check, without consulting any institution, which key signed each enrolled entry, in what order the entries were chained, and whether any entry's committed content was changed afterwards.
+
+This package recomputes the hash chain, signatures, and time receipts of a sealed session record and reports whether it holds, and if not, at which entry it breaks.
+
+This repository is the format specification and a reference reader: it does not produce records as a tool and holds no private keys, and the producer functions in the API are a reference to check a second producer against (see [What this does not do](#what-this-does-not-do)).
 
 One package, three ways to read a record: the library (`import ... from "sealedrecord"`), a command line (`npx sealedrecord verify`), and a web verifier served as static files from this repository (https://juanlentino.github.io/sealedrecord/). All three run the same code.
 
 Specification: [docs/FORMAT.md](docs/FORMAT.md). How this relates to C2PA: [COMPARISON.md](COMPARISON.md).
 
+## Try it
+
+Open https://juanlentino.github.io/sealedrecord/ and press "Load the example record" or "Load it with one character changed". The examples are the conformance vectors this library is tested against.
+
+From a shell, without cloning. The vectors are not in the npm package, so fetch them first:
+
+```sh
+curl -sO https://raw.githubusercontent.com/juanlentino/sealedrecord/main/vectors/record.json
+curl -sO https://raw.githubusercontent.com/juanlentino/sealedrecord/main/vectors/take.wav
+npx sealedrecord verify record.json take.wav
+```
+
+```text
+holds
+  9 of 9 entries read; signatures verified
+  9 of 9 receipts verify against the attestation key the record carries (the key holder's word on time, not a timestamp proof)
+  tracks: Lead Vox intact, Keys intact, Kick intact
+take.wav: exact (entry 2)
+```
+
+Change one word in entry 4 and the record breaks there, with exit code 1:
+
+```sh
+sed 's/chorus wants a double/chorus wants a triple/' record.json > altered.json && npx sealedrecord verify altered.json; echo $?
+```
+
+```text
+altered at entry 4
+  entry 4 (note) does not match its recorded digest: recomputed c056c813…, recorded a3442bc7…; its content was altered after signing
+  3 of 9 entries read; signatures verified
+  3 of 3 receipts verify against the attestation key the record carries (the key holder's word on time, not a timestamp proof)
+  tracks: Lead Vox intact, Keys intact, Kick pending
+1
+```
+
 ## Verify in a browser
 
-https://juanlentino.github.io/sealedrecord/ is this library served as static files: drop a record, get a reading. [explain.html](https://juanlentino.github.io/sealedrecord/explain.html) beside it says what is checked and what each verdict means, with no scripts at all. Whether the live page matches `main` and the registry is checked daily: ![live page freshness](https://github.com/juanlentino/sealedrecord/actions/workflows/freshness.yml/badge.svg). The page serves `build.json`, a static stamp naming the library version it was assembled from and the commit that last touched its inputs; the page itself never reads it. The command line below does the same from a shell. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads. The example buttons use the conformance vectors below.
+The example buttons on https://juanlentino.github.io/sealedrecord/ use the conformance vectors below. The page is this library served as static files: drop a record, get a reading. [explain.html](https://juanlentino.github.io/sealedrecord/explain.html) beside it says what is checked and what each verdict means, with no scripts at all. Whether the live page matches `main` and the registry is checked daily: ![live page freshness](https://github.com/juanlentino/sealedrecord/actions/workflows/freshness.yml/badge.svg). The page serves `build.json`, a static stamp naming the library version it was assembled from and the commit that last touched its inputs; the page itself never reads it. The command line below does the same from a shell. The page imports the published npm tarball of the version it names, is rebuilt only by the release workflow, and makes no network request after it loads.
 
 ## Command line
+
+The commands take your own files, or the conformance vectors, which live in the repository, not the package.
 
 ```sh
 npx sealedrecord verify record.json                 # reading and receipts
@@ -78,6 +119,7 @@ const sameAudio = exact.length ? exact : findPcmAnchors(await pcmHashFile(file),
 - No verification of timestamp proofs (OpenTimestamps or similar). They may travel in the record; this library does not check them.
 - No reading or writing of C2PA manifests.
 - No sample anchor for compressed audio. Only uncompressed WAV (PCM and IEEE float) has one; other files match by file hash only.
+- No link between records. `derivedFrom` names an earlier entry in the same record (FORMAT.md 4.5). The format defines no link from one record to another.
 
 ## Specification and background
 
@@ -87,6 +129,7 @@ The design the format implements was published before this library existed:
 
 - Provenance Over Detection. SSRN 6402298. https://papers.ssrn.com/abstract=6402298
 - Provenance as Substrate. SSRN 6730343. https://papers.ssrn.com/abstract=6730343
+- Provenance Without Institutions. SSRN 7456638. https://papers.ssrn.com/abstract=7456638
 - Author ORCID: https://orcid.org/0009-0006-8151-5920
 
 The papers argue for what the format commits to and why; the specification says how. Where they differ, the specification governs this implementation. [COMPARISON.md](COMPARISON.md) states how the format relates to C2PA: different objects, different trust, and how they compose.
