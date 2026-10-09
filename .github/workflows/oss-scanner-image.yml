@@ -14,8 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: build as the scanner does (repository as context)
-        run: docker build -f .oss-scanner/Dockerfile -t sealedrecord-oss-scanner . 2>&1 | tee build.log
-      - name: the suites ran and passed inside the image
-        run: |
-          grep -q "WARNING:" build.log && { echo "a suite failed inside the image"; exit 1; } || true
-          docker run --rm --network none sealedrecord-oss-scanner sh -c "npm test && cd conformance/go && go test ./..."
+        run: docker build -f .oss-scanner/Dockerfile -t sealedrecord-oss-scanner .
+      # The Dockerfile only warns on a failing suite (the scanner's template asks
+      # for that); here both suites must pass, with no network, as in a scan.
+      - name: both suites pass inside the image, offline
+        run: docker run --rm --network none sealedrecord-oss-scanner sh -c "npm test && cd conformance/go && go test ./..."
