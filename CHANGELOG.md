@@ -5,6 +5,7 @@ All notable changes to this library. SemVer, 0.x: minor for new capability, patc
 ## [Unreleased]
 
 ### Added
+- `.oss-scanner/`: a Dockerfile and a threat model for Anthropic's OSS Scanner, which builds the package in an isolated image and looks for records the verifier misjudges. The threat model restates the security property from SECURITY.md (never `holds` for a record that does not hold, never an exception instead of a reading) as severity guidance and lists what is out of scope. A workflow builds that image on any pull request touching it or the dependencies and re-runs both suites inside it with no network, the scanner's own condition. No change to the library, the format, the vectors, or any reader outcome.
 - Issues: a `1.0` milestone with the freeze gate as its issue, one `unclaimed` issue per idea in NOTES.md, labels (`spec-gap`, `unclaimed`, `not-planned`, `freeze`), and two issue templates (specification gap, misjudged record) with the security form and the unclaimed list as contact links. Nothing was backfilled for past work; the CHANGELOG and releases carry that. A pull request template, and the templates and CONTRIBUTING say plainly that a template, a claim, or a proposal creates no obligation to merge.
 
 ### Changed
