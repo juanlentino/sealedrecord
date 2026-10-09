@@ -1,0 +1,21 @@
+name: oss-scanner image
+# Builds the image Anthropic's OSS Scanner builds (.oss-scanner/Dockerfile), so a
+# change that breaks it is caught here, not by a build-failure email.
+on:
+  pull_request:
+    paths: [".oss-scanner/**", "package.json", "package-lock.json", "conformance/go/**"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: build as the scanner does (repository as context)
+        run: docker build -f .oss-scanner/Dockerfile -t sealedrecord-oss-scanner . 2>&1 | tee build.log
+      - name: the suites ran and passed inside the image
+        run: |
+          grep -q "WARNING:" build.log && { echo "a suite failed inside the image"; exit 1; } || true
+          docker run --rm --network none sealedrecord-oss-scanner sh -c "npm test && cd conformance/go && go test ./..."
