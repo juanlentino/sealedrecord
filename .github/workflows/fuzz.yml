@@ -1,0 +1,37 @@
+# The differential fuzz on fresh seeds. CI runs the same 300 cases on every
+# push; this runs 20,000 new ones a day, starting at run_number * 20000, so
+# no two runs cover the same seeds. A failure's test name gives FUZZ_N and
+# FUZZ_OFFSET, and each disagreement names its seed, so it reproduces with
+#   FUZZ_N=<n> FUZZ_OFFSET=<offset> npx vitest run test/differential.test.js
+# or by hand here with the same two inputs.
+name: fuzz
+on:
+  schedule:
+    - cron: "41 4 * * *"
+  workflow_dispatch:
+    inputs:
+      n:
+        description: cases
+        default: "20000"
+      offset:
+        description: first seed (empty for run_number * 20000)
+        default: ""
+permissions:
+  contents: read
+jobs:
+  differential:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - run: npm ci
+      - run: npx vitest run test/differential.test.js
+        env:
+          FUZZ_N: ${{ inputs.n || '20000' }}
+          FUZZ_OFFSET: ${{ inputs.offset || github.run_number * 20000 }}
