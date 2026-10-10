@@ -31,7 +31,12 @@ jobs:
         with:
           go-version: "1.22"
       - run: npm ci
-      - run: npx vitest run test/differential.test.js
+      # Expressions have no arithmetic, so the offset is computed in the shell.
+      - run: |
+          export FUZZ_N="${N_IN:-20000}"
+          export FUZZ_OFFSET="${OFFSET_IN:-$((RUN * 20000))}"
+          npx vitest run test/differential.test.js
         env:
-          FUZZ_N: ${{ inputs.n || '20000' }}
-          FUZZ_OFFSET: ${{ inputs.offset || github.run_number * 20000 }}
+          N_IN: ${{ inputs.n }}
+          OFFSET_IN: ${{ inputs.offset }}
+          RUN: ${{ github.run_number }}
