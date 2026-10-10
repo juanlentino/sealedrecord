@@ -46,7 +46,7 @@ jobs:
       - name: wait for the registry to serve this version
         run: |
           v=$(node -p "require('./package.json').version")
-          for i in $(seq 1 30); do
+          for _ in $(seq 1 30); do
             npm view "sealedrecord@$v" version >/dev/null 2>&1 && exit 0
             sleep 10
           done
@@ -63,7 +63,7 @@ jobs:
         uses: actions/deploy-pages@v4
       - name: what is live must be what was just built (Pages caches for ten minutes; keep asking)
         run: |
-          for i in $(seq 1 40); do node scripts/live-check.mjs && exit 0; sleep 20; done
+          for _ in $(seq 1 40); do node scripts/live-check.mjs && exit 0; sleep 20; done
           echo "the live page never matched this build"; exit 1
 
   # The GitHub Release carries every deliverable as its own file: the npm

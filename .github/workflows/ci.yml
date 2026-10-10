@@ -22,6 +22,15 @@ jobs:
           go-version: "1.22"
       - run: npm ci
       - run: npm run lint
+      # Workflows are code too: fuzz.yml once merged with an expression GitHub
+      # could not parse. One matrix leg is enough; the release is pinned by hash.
+      - name: actionlint
+        if: matrix.node == 24
+        run: |
+          curl -sSLo /tmp/actionlint.tgz https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  /tmp/actionlint.tgz" | sha256sum -c -
+          tar -xzf /tmp/actionlint.tgz -C /tmp actionlint
+          /tmp/actionlint -color
       - name: the second reader agrees with the vectors
         run: cd conformance/go && go test ./...
       - run: npm test   # includes the differential fuzz against the Go reader
